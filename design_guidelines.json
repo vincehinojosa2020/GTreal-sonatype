@@ -1,0 +1,139 @@
+{
+  "design_system": {
+    "brand_identity": {
+      "name": "GT Real",
+      "essence": "Dedicated to every client. As if you were a patient.",
+      "vibe": "Prada meets Madewell meets Bay Area soul. Luxury, Editorial, Warm, Trustworthy.",
+      "logo_text": "GT Real"
+    },
+    "typography": {
+      "font_family": {
+        "heading": "Cormorant Garamond, serif",
+        "body": "DM Sans, sans-serif",
+        "accent": "Outfit, sans-serif"
+      },
+      "scale": {
+        "h1": "text-5xl md:text-7xl font-light tracking-tight leading-[0.95]",
+        "h2": "text-4xl md:text-5xl font-light tracking-tight",
+        "h3": "text-2xl md:text-3xl font-normal",
+        "body": "text-base md:text-lg leading-relaxed text-charcoal/80",
+        "label": "text-xs md:text-sm uppercase tracking-[0.2em] font-semibold text-taupe"
+      },
+      "imports": [
+        "@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Outfit:wght@400;500;600&display=swap');"
+      ]
+    },
+    "colors": {
+      "palette": {
+        "cream": "#FAF8F5",
+        "warm_grey": "#E8E4DE",
+        "charcoal": "#2C2C2C",
+        "taupe": "#9C8B7A",
+        "dark_charcoal": "#1E1E1E",
+        "white": "#FFFFFF"
+      },
+      "usage": {
+        "background_primary": "bg-[#FAF8F5]",
+        "background_secondary": "bg-[#E8E4DE]",
+        "background_dark": "bg-[#1E1E1E]",
+        "text_primary": "text-[#2C2C2C]",
+        "text_secondary": "text-[#6B6560]",
+        "text_inverse": "text-[#FAF8F5]",
+        "accent": "text-[#9C8B7A]",
+        "border": "border-[#9C8B7A]/20"
+      }
+    },
+    "layout": {
+      "spacing": {
+        "section_padding": "py-24 md:py-32",
+        "container_padding": "px-6 md:px-12 lg:px-24",
+        "element_gap": "gap-8 md:gap-12"
+      },
+      "grid_system": "Bento Grid (Asymmetric)",
+      "border_radius": "rounded-sm"
+    },
+    "visual_enhancers": {
+      "shadows": "shadow-[0_4px_20px_-2px_rgba(44,44,44,0.05)]",
+      "glassmorphism": "backdrop-blur-md bg-[#FAF8F5]/80 border-b border-[#9C8B7A]/10",
+      "textures": "Subtle noise overlay opacity-50 mix-blend-overlay pointer-events-none fixed inset-0 z-50"
+    },
+    "motion": {
+      "library": "framer-motion",
+      "scroll": "lenis (MANDATORY)",
+      "animations": {
+        "fade_up": {
+          "initial": { "opacity": 0, "y": 40 },
+          "whileInView": { "opacity": 1, "y": 0 },
+          "viewport": { "once": true },
+          "transition": { "duration": 0.8, "ease": [0.22, 1, 0.36, 1] }
+        },
+        "stagger_children": {
+          "visible": { "transition": { "staggerChildren": 0.1 } }
+        }
+      }
+    }
+  },
+  "components": {
+    "navigation": {
+      "style": "Sticky, Glassmorphism, Minimal",
+      "structure": "Logo (Left) - Links (Center) - CTA (Right)",
+      "classes": "fixed top-0 w-full z-50 px-6 py-4 flex justify-between items-center transition-all duration-300"
+    },
+    "buttons": {
+      "primary": "bg-[#2C2C2C] text-[#FAF8F5] px-8 py-3 rounded-sm hover:bg-[#9C8B7A] transition-colors duration-300 text-sm uppercase tracking-widest font-medium",
+      "secondary": "border border-[#2C2C2C] text-[#2C2C2C] px-8 py-3 rounded-sm hover:bg-[#2C2C2C] hover:text-[#FAF8F5] transition-all duration-300 text-sm uppercase tracking-widest",
+      "ghost": "text-[#2C2C2C] hover:text-[#9C8B7A] transition-colors duration-300 text-sm uppercase tracking-widest underline-offset-4 hover:underline"
+    },
+    "cards": {
+      "style": "Minimalist, Editorial",
+      "classes": "bg-white p-8 md:p-12 border border-[#E8E4DE] hover:border-[#9C8B7A]/50 transition-colors duration-500"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bg": {
+        "url": "https://images.unsplash.com/photo-1682184805271-11671b7ecf4c?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Modern Luxury Living Room with Large Window",
+        "usage": "Hero Section Right Side"
+      },
+      "portrait": {
+        "url": "https://images.unsplash.com/photo-1769628027250-d2a7a5a4eb64?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "George Toscano Editorial Portrait",
+        "usage": "About Section / Hero Placeholder"
+      },
+      "sf_skyline": {
+        "url": "https://images.unsplash.com/photo-1608502993651-6f3792f6c0a2?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "Golden Gate Bridge Artistic Fog",
+        "usage": "Vision Section Background or Parallax"
+      },
+      "interior_detail": {
+        "url": "https://images.unsplash.com/photo-1705326701287-346fc37a2c86?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "alt": "White Furniture Detail",
+        "usage": "Why Choose Me Card Background (Subtle)"
+      }
+    },
+    "icons": {
+      "library": "phosphor-icons/react",
+      "style": "thin",
+      "color": "#2C2C2C"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. SETUP: Install 'lenis' for smooth scrolling immediately. It is critical for the luxury feel.",
+    "2. FONTS: Add the Google Fonts import to index.css. Configure Tailwind theme to use 'Cormorant Garamond' for 'font-serif' and 'DM Sans' for 'font-sans'.",
+    "3. COLORS: Extend Tailwind config with the specific hex codes provided in 'colors.palette'.",
+    "4. LAYOUT: Do NOT use standard Bootstrap columns. Use the 'Bento Grid' approach. Allow elements to overlap slightly for an editorial look.",
+    "5. IMAGES: Use the provided Unsplash URLs. Apply 'grayscale' filter on hover or initial state if needed to match the neutral palette, then reveal color on interaction.",
+    "6. TEXT: Ensure all headings use 'font-serif' and 'tracking-tight'. All labels must be 'uppercase tracking-widest'.",
+    "7. DARK SECTIONS: The 'Expertise' section MUST be 'bg-[#1E1E1E]' with 'text-[#FAF8F5]'.",
+    "8. TESTING: Add 'data-testid' to all interactive elements (buttons, links, cards)."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Avoid generic 'AI slop' designs. No default shadows, no default rounded-lg.",
+    "Use 2-3x more spacing than typical. Luxury = Space.",
+    "Micro-animations are mandatory. Nothing should appear instantly.",
+    "Do not use 'Inter' for headings. Use the specified Serif font.",
+    "Use 'sonner' for toasts.",
+    "Create new components in 'src/components/ui' if needed, matching the project structure."
+  ]
+}
