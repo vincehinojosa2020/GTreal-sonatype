@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, createContext, useContext } from "react";
 import "@/App.css";
 import { motion, useInView } from "framer-motion";
 import { 
@@ -14,25 +14,41 @@ import {
   InstagramLogo,
   ArrowRight,
   MusicNote,
-  X
+  X,
+  Play,
+  Pause,
+  Sun,
+  Moon
 } from "@phosphor-icons/react";
+
+// Theme Context
+const ThemeContext = createContext();
+
+const useTheme = () => useContext(ThemeContext);
+
+const ThemeProvider = ({ children }) => {
+  const [isDark, setIsDark] = useState(true);
+  
+  const toggleTheme = () => setIsDark(!isDark);
+  
+  return (
+    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+      <div className={isDark ? 'theme-dark' : 'theme-light'}>
+        {children}
+      </div>
+    </ThemeContext.Provider>
+  );
+};
 
 // Animation variants
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }
-  }
+  visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 }
-  }
+  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } }
 };
 
 // Animated section wrapper
@@ -41,78 +57,109 @@ const AnimatedSection = ({ children, className = "" }) => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
   
   return (
-    <motion.div
-      ref={ref}
-      initial="hidden"
-      animate={isInView ? "visible" : "hidden"}
-      variants={fadeUp}
-      className={className}
-    >
+    <motion.div ref={ref} initial="hidden" animate={isInView ? "visible" : "hidden"} variants={fadeUp} className={className}>
       {children}
     </motion.div>
   );
 };
 
-// Music Player Component
-const MusicPlayer = () => {
+// Audio Player Component (Audio-only style)
+const AudioPlayer = () => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
 
-  const toggleExpand = () => {
-    if (!isExpanded) setIsExpanded(true);
+  // Using a hidden YouTube iframe for audio
+  const togglePlay = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      } else {
+        audioRef.current.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      }
+      setIsPlaying(!isPlaying);
+    }
   };
 
   const closePlayer = (e) => {
     e.stopPropagation();
     setIsExpanded(false);
+    setIsPlaying(false);
   };
 
   return (
     <div 
       data-testid="music-player"
-      className={`music-player-float ${isExpanded ? 'music-player-expanded' : 'music-player-collapsed animate-pulse-green'}`}
-      onClick={!isExpanded ? toggleExpand : undefined}
+      className={`music-player-float ${isExpanded ? 'music-player-expanded-audio' : 'music-player-collapsed'}`}
+      onClick={!isExpanded ? () => setIsExpanded(true) : undefined}
     >
       {!isExpanded ? (
-        <div className="flex items-center justify-center w-full h-full">
+        <div className="flex items-center justify-center w-full h-full animate-pulse-green">
           <MusicNote size={28} weight="fill" className="text-monster-green" />
         </div>
       ) : (
         <div className="p-4">
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <MusicNote size={18} weight="fill" className="text-monster-green" />
               <span className="text-xs uppercase tracking-widest text-monster-green font-accent font-bold">Now Playing</span>
             </div>
-            <button 
-              onClick={closePlayer}
-              data-testid="music-player-close"
-              className="text-monster-silver hover:text-monster-white transition-colors"
-            >
+            <button onClick={closePlayer} data-testid="music-player-close" className="text-current opacity-60 hover:opacity-100 transition-opacity">
               <X size={20} />
             </button>
           </div>
-          <div className="aspect-video bg-monster-black rounded overflow-hidden border border-monster-green/30">
-            <iframe
-              width="100%"
-              height="100%"
-              src="https://www.youtube.com/embed/FRV18ivjjN4?rel=0"
-              title="Zildjian Vault Performance - Sean Wright"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-              className="w-full h-full"
-            />
+          
+          {/* Audio-only style player */}
+          <div className="flex items-center gap-4 p-4 bg-current/5 rounded-lg border border-monster-green/20">
+            <button 
+              onClick={togglePlay}
+              data-testid="audio-play-btn"
+              className="w-12 h-12 flex items-center justify-center bg-monster-green text-monster-black rounded-full hover:bg-monster-green-light transition-colors"
+            >
+              {isPlaying ? <Pause size={20} weight="fill" /> : <Play size={20} weight="fill" />}
+            </button>
+            <div className="flex-1">
+              <p className="font-semibold text-sm">Zildjian Vault Performance</p>
+              <p className="text-xs opacity-60">Sean Wright</p>
+            </div>
           </div>
-          <p className="text-xs text-monster-silver mt-3 text-center">Zildjian Vault Performance</p>
+          
+          {/* Hidden YouTube iframe for audio */}
+          <iframe
+            ref={audioRef}
+            className="hidden"
+            src="https://www.youtube.com/embed/FRV18ivjjN4?enablejsapi=1&rel=0"
+            title="Audio Player"
+            allow="autoplay"
+          />
+          
+          <p className="text-xs opacity-50 mt-3 text-center">George's favorite drum performance</p>
         </div>
       )}
     </div>
   );
 };
 
+// Theme Toggle Component
+const ThemeToggle = () => {
+  const { isDark, toggleTheme } = useTheme();
+  
+  return (
+    <button
+      data-testid="theme-toggle"
+      onClick={toggleTheme}
+      className="w-10 h-10 flex items-center justify-center rounded-full border-2 border-monster-green/30 hover:border-monster-green hover:bg-monster-green/10 transition-all"
+      aria-label="Toggle theme"
+    >
+      {isDark ? <Sun size={18} className="text-monster-green" /> : <Moon size={18} className="text-monster-green" />}
+    </button>
+  );
+};
+
 // Navigation Component
 const Navigation = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { isDark } = useTheme();
   
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -146,57 +193,76 @@ const Navigation = () => {
             key={item.id}
             data-testid={`nav-${item.id}`}
             onClick={() => scrollToSection(item.id)}
-            className="text-monster-white/80 text-sm font-sans hover:text-monster-green transition-colors duration-300 underline-animation"
+            className="nav-link text-sm font-sans hover:text-monster-green transition-colors duration-300 underline-animation"
           >
             {item.label}
           </button>
         ))}
       </div>
       
-      <button 
-        data-testid="nav-cta"
-        onClick={() => scrollToSection('connect')}
-        className="bg-monster-green text-monster-black px-6 py-2.5 text-xs uppercase tracking-widest font-accent font-bold hover:bg-monster-green-light hover:shadow-[0_0_20px_rgba(149,214,0,0.4)] transition-all duration-300"
-      >
-        Let's Talk
-      </button>
+      <div className="flex items-center gap-4">
+        <ThemeToggle />
+        <button 
+          data-testid="nav-cta"
+          onClick={() => scrollToSection('connect')}
+          className="bg-monster-green text-monster-black px-6 py-2.5 text-xs uppercase tracking-widest font-accent font-bold hover:bg-monster-green-light hover:shadow-[0_0_20px_rgba(149,214,0,0.4)] transition-all duration-300"
+        >
+          Let's Talk
+        </button>
+      </div>
     </nav>
+  );
+};
+
+// Quick Contact Bar
+const QuickContactBar = () => {
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-monster-black/95 backdrop-blur-md border-t-2 border-monster-green/30 p-4">
+      <div className="flex items-center justify-center gap-4">
+        <a href="tel:4086036603" className="flex-1 btn-primary text-center text-xs py-3">
+          <Phone size={16} className="inline mr-2" /> Call Now
+        </a>
+        <a href="sms:4086036603" className="flex-1 btn-secondary text-center text-xs py-3">
+          Text Me
+        </a>
+      </div>
+    </div>
   );
 };
 
 // Hero Section
 const HeroSection = () => {
   return (
-    <section id="hero" data-testid="hero-section" className="min-h-screen bg-monster-black pt-20 relative overflow-hidden drum-pattern">
+    <section id="hero" data-testid="hero-section" className="min-h-screen section-bg pt-20 relative overflow-hidden drum-pattern">
       <div className="relative grid md:grid-cols-2 min-h-[calc(100vh-5rem)]">
         {/* Left Content */}
         <div className="flex flex-col justify-center px-6 md:px-12 lg:px-24 py-16 md:py-0">
           <AnimatedSection>
             <span className="section-label mb-6">Realtor · Technologist · Drummer</span>
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight font-serif text-monster-white leading-[0.95] mb-8">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight font-serif heading-color leading-[0.95] mb-8">
               Your Home.<br />
               Your Future.<br />
               <span className="italic text-monster-green text-glow-animate">Unleash The Beast.</span>
             </h1>
-            <p className="body-text max-w-lg mb-10">
+            <p className="body-text max-w-lg mb-8">
               I'm George Toscano — a Bay Area real estate professional with deep roots in healthcare technology and 25+ years behind the drums. Precision. Passion. Power. I bring it all to every deal.
             </p>
             
-            <div className="flex flex-wrap gap-4 mb-10">
-              <a 
-                href="#connect" 
-                data-testid="hero-cta-primary"
-                className="btn-primary inline-flex items-center gap-2"
-              >
-                Work With Me <ArrowRight size={16} weight="bold" />
-              </a>
-              <a 
-                href="#about" 
-                data-testid="hero-cta-secondary"
-                className="btn-secondary"
-              >
-                My Story
-              </a>
+            {/* Contact CTA - More prominent */}
+            <div className="bg-monster-green/10 border-2 border-monster-green/40 p-6 mb-8 max-w-md">
+              <p className="text-monster-green font-bold text-lg mb-2">Ready to make your move?</p>
+              <p className="text-sm mb-4 body-text">DM me, text me, or shoot me an email — let's chat about your future.</p>
+              <div className="flex flex-wrap gap-3">
+                <a href="tel:4086036603" className="btn-primary text-xs py-2 px-4 inline-flex items-center gap-2">
+                  <Phone size={14} weight="bold" /> (408) 603-6603
+                </a>
+                <a href="mailto:gtdrums@gmail.com" className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-2">
+                  <Envelope size={14} weight="bold" /> Email
+                </a>
+                <a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-2">
+                  <LinkedinLogo size={14} weight="bold" /> LinkedIn
+                </a>
+              </div>
             </div>
             
             <div className="trust-bar">
@@ -216,8 +282,8 @@ const HeroSection = () => {
             data-testid="hero-image"
             className="w-full h-full object-cover image-hover-color"
           />
-          <div className="absolute bottom-8 right-8 bg-monster-black/95 backdrop-blur-sm p-6 max-w-xs hidden lg:block border-2 border-monster-green/30">
-            <p className="text-sm text-monster-silver italic font-serif">
+          <div className="absolute bottom-8 right-8 card-bg backdrop-blur-sm p-6 max-w-xs hidden lg:block border-2 border-monster-green/30">
+            <p className="text-sm body-text italic font-serif">
               "Dedicated to every client. As if you were a patient."
             </p>
           </div>
@@ -225,7 +291,7 @@ const HeroSection = () => {
       </div>
       
       {/* Marquee */}
-      <div className="bg-monster-dark py-4 overflow-hidden border-y-2 border-monster-green/20">
+      <div className="marquee-bg py-4 overflow-hidden border-y-2 border-monster-green/20">
         <div className="marquee-container">
           <div className="marquee-content">
             {Array(3).fill([
@@ -264,11 +330,11 @@ const WhyMeSection = () => {
   ];
 
   return (
-    <section id="why-me" data-testid="why-me-section" className="py-24 md:py-32 bg-monster-dark green-accent-section">
+    <section id="why-me" data-testid="why-me-section" className="py-24 md:py-32 section-bg-alt green-accent-section">
       <div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
         <AnimatedSection>
           <span className="section-label mb-4 block">Why Choose Me</span>
-          <h2 className="section-heading mb-8">
+          <h2 className="section-heading heading-color mb-8">
             Where Healthcare Precision<br />
             <span className="italic text-monster-green text-glow">Meets Raw Energy.</span>
           </h2>
@@ -277,25 +343,14 @@ const WhyMeSection = () => {
           </p>
         </AnimatedSection>
         
-        <motion.div 
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid md:grid-cols-3 gap-6"
-        >
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid md:grid-cols-3 gap-6">
           {cards.map((card, index) => (
-            <motion.div
-              key={index}
-              variants={fadeUp}
-              data-testid={`value-card-${index}`}
-              className="card-editorial card-lift"
-            >
+            <motion.div key={index} variants={fadeUp} data-testid={`value-card-${index}`} className="card-editorial card-lift">
               <div className="icon-container">
                 <card.icon size={30} weight="bold" className="text-monster-green" />
               </div>
-              <h3 className="text-xl md:text-2xl font-serif font-normal text-monster-white mb-4">{card.title}</h3>
-              <p className="text-monster-silver leading-relaxed">{card.description}</p>
+              <h3 className="text-xl md:text-2xl font-serif font-normal heading-color mb-4">{card.title}</h3>
+              <p className="body-text leading-relaxed">{card.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -313,17 +368,16 @@ const AboutSection = () => {
   ];
 
   return (
-    <section id="about" data-testid="about-section" className="py-24 md:py-32 bg-monster-black">
+    <section id="about" data-testid="about-section" className="py-24 md:py-32 section-bg">
       <div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-2 gap-12 lg:gap-24 items-center">
-          {/* Image */}
           <AnimatedSection className="order-2 md:order-1">
             <div className="relative">
               <img 
                 src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?crop=entropy&cs=srgb&fm=jpg&q=85&w=800"
                 alt="George Toscano"
                 data-testid="about-image"
-                className="w-full aspect-[4/5] object-cover image-hover-color border-2 border-monster-gray"
+                className="w-full aspect-[4/5] object-cover image-hover-color border-2 border-monster-green/20"
               />
               <div className="absolute -bottom-6 -right-6 bg-monster-green text-monster-black p-8 hidden lg:block">
                 <div className="flex gap-8">
@@ -338,24 +392,23 @@ const AboutSection = () => {
             </div>
           </AnimatedSection>
           
-          {/* Content */}
           <AnimatedSection className="order-1 md:order-2">
             <span className="section-label mb-4 block">My Story</span>
-            <h2 className="section-heading mb-8">
+            <h2 className="section-heading heading-color mb-8">
               Built Through<br />
               <span className="italic text-monster-green text-glow">Discipline & Energy.</span>
             </h2>
             
             <div className="space-y-6 body-text">
-              <p>
-                I've spent over 25 years as a professional drummer across the Bay Area — Tama drums, Zildjian cymbals, Vater sticks. That discipline shaped me. Music taught me timing, feel, and when to drive hard.
-              </p>
-              <p>
-                My career in healthcare technology brought me to Stanford Children's Health and Sutter Health, where I developed a technologist's mind for systems, data, and critical problem-solving.
-              </p>
-              <p>
-                Now as a Licensed Real Estate Professional with Kollab Real Estate, I combine all of these worlds. Technology. Heart. Raw energy. I'm not just helping you buy or sell a home — I'm helping you unleash your future.
-              </p>
+              <p>I've spent over 25 years as a professional drummer across the Bay Area — Tama drums, Zildjian cymbals, Vater sticks. That discipline shaped me.</p>
+              <p>My career in healthcare technology brought me to Stanford Children's Health and Sutter Health, where I developed a technologist's mind for systems and critical problem-solving.</p>
+              <p>Now as a Licensed Real Estate Professional with Kollab Real Estate, I combine all of these worlds. Technology. Heart. Raw energy.</p>
+            </div>
+            
+            {/* Contact CTA in About */}
+            <div className="mt-8 p-4 border-l-4 border-monster-green bg-monster-green/5">
+              <p className="font-bold text-monster-green mb-2">Let's connect!</p>
+              <p className="text-sm body-text mb-3">Text me at <a href="sms:4086036603" className="text-monster-green hover:underline font-bold">(408) 603-6603</a> or email <a href="mailto:gtdrums@gmail.com" className="text-monster-green hover:underline font-bold">gtdrums@gmail.com</a></p>
             </div>
           </AnimatedSection>
         </div>
@@ -365,7 +418,7 @@ const AboutSection = () => {
           {stats.map((stat, index) => (
             <div key={index} className="stat-card">
               <p className="text-2xl font-serif text-monster-green font-bold">{stat.value}</p>
-              <p className="text-xs uppercase tracking-widest text-monster-silver mt-1">{stat.label}</p>
+              <p className="text-xs uppercase tracking-widest body-text mt-1">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -377,51 +430,28 @@ const AboutSection = () => {
 // Expertise Section
 const ExpertiseSection = () => {
   const expertise = [
-    {
-      icon: Buildings,
-      title: "Real Estate",
-      description: "Bay Area residential and investment properties. Licensed professional with Kollab Real Estate, bringing healthcare-level precision and drummer's intensity to every transaction."
-    },
-    {
-      icon: Cpu,
-      title: "Technology",
-      description: "20+ years in healthcare tech at Stanford Children's Health, Sutter Health, and Kaiser Permanente. I leverage data and modern tools to give you an edge."
-    },
-    {
-      icon: UsersThree,
-      title: "Startup Investor",
-      description: "Active investor in Bay Area startups. Understanding market dynamics, valuations, and growth potential — insights I bring to your real estate decisions."
-    }
+    { icon: Buildings, title: "Real Estate", description: "Bay Area residential and investment properties. Licensed professional with Kollab Real Estate, bringing healthcare-level precision to every transaction." },
+    { icon: Cpu, title: "Technology", description: "20+ years in healthcare tech at Stanford Children's Health, Sutter Health, and Kaiser Permanente. I leverage data and modern tools to give you an edge." },
+    { icon: UsersThree, title: "Startup Investor", description: "Active investor in Bay Area startups. Understanding market dynamics, valuations, and growth potential — insights I bring to your real estate decisions." }
   ];
 
   return (
-    <section id="expertise" data-testid="expertise-section" className="green-accent-section py-24 md:py-32">
+    <section id="expertise" data-testid="expertise-section" className="green-accent-section py-24 md:py-32 section-bg-alt">
       <div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
         <AnimatedSection>
           <span className="section-label mb-4 block">Expertise</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight font-serif text-monster-white mb-16">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight font-serif heading-color mb-16">
             Real Estate. Technology.<br />
             <span className="italic text-monster-green text-glow">Investment.</span>
           </h2>
         </AnimatedSection>
         
-        <motion.div 
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid md:grid-cols-3 gap-8 md:gap-12"
-        >
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid md:grid-cols-3 gap-8 md:gap-12">
           {expertise.map((item, index) => (
-            <motion.div
-              key={index}
-              variants={fadeUp}
-              data-testid={`expertise-card-${index}`}
-              className="border-t-2 border-monster-green/40 pt-8"
-            >
+            <motion.div key={index} variants={fadeUp} data-testid={`expertise-card-${index}`} className="border-t-2 border-monster-green/40 pt-8">
               <item.icon size={40} weight="bold" className="text-monster-green mb-6" />
-              <h3 className="text-xl md:text-2xl font-serif text-monster-white mb-4">{item.title}</h3>
-              <p className="text-monster-silver leading-relaxed">{item.description}</p>
+              <h3 className="text-xl md:text-2xl font-serif heading-color mb-4">{item.title}</h3>
+              <p className="body-text leading-relaxed">{item.description}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -440,11 +470,11 @@ const ExperienceSection = () => {
   ];
 
   return (
-    <section id="experience" data-testid="experience-section" className="py-24 md:py-32 bg-monster-black">
+    <section id="experience" data-testid="experience-section" className="py-24 md:py-32 section-bg">
       <div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
         <AnimatedSection>
           <span className="section-label mb-4 block">Experience</span>
-          <h2 className="section-heading mb-16">
+          <h2 className="section-heading heading-color mb-16">
             A Career Built On<br />
             <span className="italic text-monster-green text-glow">Excellence.</span>
           </h2>
@@ -452,20 +482,15 @@ const ExperienceSection = () => {
         
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="space-y-0">
           {experiences.map((exp, index) => (
-            <motion.div
-              key={index}
-              variants={fadeUp}
-              data-testid={`experience-${index}`}
-              className="py-8 border-b border-monster-gray group hover:bg-monster-dark/50 transition-colors px-4 -mx-4"
-            >
+            <motion.div key={index} variants={fadeUp} data-testid={`experience-${index}`} className="py-8 border-b border-current/10 group hover:bg-monster-green/5 transition-colors px-4 -mx-4">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-xl md:text-2xl font-serif text-monster-white group-hover:text-monster-green transition-colors">{exp.company}</h3>
-                  <p className="text-monster-silver mt-1">{exp.role}</p>
+                  <h3 className="text-xl md:text-2xl font-serif heading-color group-hover:text-monster-green transition-colors">{exp.company}</h3>
+                  <p className="body-text mt-1">{exp.role}</p>
                 </div>
                 <div className="text-right">
                   <p className="text-monster-green font-accent text-sm tracking-wider font-bold">{exp.period}</p>
-                  <p className="text-monster-silver/60 text-sm">{exp.location}</p>
+                  <p className="body-text text-sm opacity-60">{exp.location}</p>
                 </div>
               </div>
             </motion.div>
@@ -476,72 +501,61 @@ const ExperienceSection = () => {
   );
 };
 
-// Vision Section
-const VisionSection = () => {
-  return (
-    <section id="vision" data-testid="vision-section" className="py-24 md:py-40 bg-monster-dark relative overflow-hidden">
-      <div className="absolute inset-0 opacity-20">
-        <img src="https://images.unsplash.com/photo-1501594907352-04cda38ebc29?crop=entropy&cs=srgb&fm=jpg&q=85&w=1920" alt="San Francisco Bay" className="w-full h-full object-cover" />
-      </div>
-      <div className="absolute inset-0 bg-gradient-to-t from-monster-dark via-monster-dark/90 to-monster-dark" />
-      
-      <div className="relative px-6 md:px-12 lg:px-24 max-w-4xl mx-auto text-center">
-        <AnimatedSection>
-          <span className="section-label mb-6 block">The Vision</span>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-tight font-serif text-monster-white mb-8">
-            Building Futures,<br />
-            <span className="italic text-monster-green text-glow-animate">One Home at a Time.</span>
-          </h2>
-          <p className="text-lg md:text-xl text-monster-silver leading-relaxed max-w-2xl mx-auto">
-            Whether you're buying your first home, investing in property, or making a strategic move — I bring the same energy that's driven me through 25+ years behind the kit. Your future matters, and I attack it with everything I've got.
-          </p>
-        </AnimatedSection>
-      </div>
-    </section>
-  );
-};
-
 // Connect Section
 const ConnectSection = () => {
   return (
-    <section id="connect" data-testid="connect-section" className="py-24 md:py-32 bg-monster-black">
+    <section id="connect" data-testid="connect-section" className="py-24 md:py-32 section-bg pb-32 md:pb-24">
       <div className="px-6 md:px-12 lg:px-24 max-w-5xl mx-auto">
-        <AnimatedSection className="text-center mb-16">
+        <AnimatedSection className="text-center mb-12">
           <span className="section-label mb-4 block">Let's Connect</span>
-          <h2 className="section-heading mb-4">
+          <h2 className="section-heading heading-color mb-4">
             Ready to Make<br />
             <span className="italic text-monster-green text-glow">Your Move?</span>
           </h2>
-          <p className="body-text max-w-xl mx-auto">
-            Whether you're buying, selling, investing, or just want to talk drums and real estate — I'm here. Let's unleash your future.
+          <p className="body-text max-w-xl mx-auto mb-6">
+            Whether you're buying, selling, investing, or just want to talk drums and real estate — I'm here.
+          </p>
+          <p className="text-2xl md:text-3xl font-serif text-monster-green text-glow font-semibold">
+            Text me today! <a href="sms:4086036603" className="hover:underline">(408) 603-6603</a>
           </p>
         </AnimatedSection>
         
-        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid md:grid-cols-2 gap-6 mb-12">
-          <motion.a href="tel:4086036603" variants={fadeUp} data-testid="contact-phone" className="contact-card flex flex-col items-center gap-4">
-            <Phone size={36} weight="bold" className="text-monster-green" />
-            <div>
-              <p className="text-xs uppercase tracking-widest text-monster-silver mb-2 font-bold">Call or Text Me</p>
-              <p className="text-xl font-serif text-monster-white">(408) 603-6603</p>
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-100px" }} className="grid md:grid-cols-3 gap-4 mb-12">
+          <motion.a href="tel:4086036603" variants={fadeUp} data-testid="contact-phone" className="contact-card flex flex-col items-center gap-3 py-8">
+            <Phone size={32} weight="bold" className="text-monster-green" />
+            <div className="text-center">
+              <p className="text-xs uppercase tracking-widest body-text mb-1 font-bold">Call Me</p>
+              <p className="text-lg font-serif heading-color">(408) 603-6603</p>
             </div>
           </motion.a>
           
-          <motion.a href="mailto:gtdrums@gmail.com" variants={fadeUp} data-testid="contact-email" className="contact-card flex flex-col items-center gap-4">
-            <Envelope size={36} weight="bold" className="text-monster-green" />
-            <div>
-              <p className="text-xs uppercase tracking-widest text-monster-silver mb-2 font-bold">Email Me</p>
-              <p className="text-xl font-serif text-monster-white">gtdrums@gmail.com</p>
+          <motion.a href="mailto:gtdrums@gmail.com" variants={fadeUp} data-testid="contact-email" className="contact-card flex flex-col items-center gap-3 py-8">
+            <Envelope size={32} weight="bold" className="text-monster-green" />
+            <div className="text-center">
+              <p className="text-xs uppercase tracking-widest body-text mb-1 font-bold">Email Me</p>
+              <p className="text-lg font-serif heading-color">gtdrums@gmail.com</p>
+            </div>
+          </motion.a>
+          
+          <motion.a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" variants={fadeUp} data-testid="contact-linkedin" className="contact-card flex flex-col items-center gap-3 py-8">
+            <LinkedinLogo size={32} weight="bold" className="text-monster-green" />
+            <div className="text-center">
+              <p className="text-xs uppercase tracking-widest body-text mb-1 font-bold">Connect</p>
+              <p className="text-lg font-serif heading-color">LinkedIn</p>
             </div>
           </motion.a>
         </motion.div>
         
-        <div className="flex justify-center gap-4">
-          <a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" data-testid="social-linkedin" className="social-btn">
-            <LinkedinLogo size={24} weight="bold" />
-          </a>
-          <a href="https://instagram.com/gtreal.io" target="_blank" rel="noopener noreferrer" data-testid="social-instagram" className="social-btn">
-            <InstagramLogo size={24} weight="bold" />
-          </a>
+        <div className="text-center">
+          <p className="body-text text-sm mb-4">Or find me on social:</p>
+          <div className="flex justify-center gap-4">
+            <a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" data-testid="social-linkedin" className="social-btn">
+              <LinkedinLogo size={24} weight="bold" />
+            </a>
+            <a href="https://instagram.com/gtreal.io" target="_blank" rel="noopener noreferrer" data-testid="social-instagram" className="social-btn">
+              <InstagramLogo size={24} weight="bold" />
+            </a>
+          </div>
         </div>
       </div>
     </section>
@@ -551,7 +565,7 @@ const ConnectSection = () => {
 // Footer
 const Footer = () => {
   return (
-    <footer data-testid="footer" className="bg-monster-darker py-16 border-t-2 border-monster-green/20">
+    <footer data-testid="footer" className="footer-bg py-16 border-t-2 border-monster-green/20">
       <div className="px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center gap-3">
@@ -561,7 +575,7 @@ const Footer = () => {
           
           <div className="flex flex-wrap justify-center gap-6 text-sm">
             {['Home', 'Why Me', 'About', 'Expertise', 'Connect'].map((link) => (
-              <a key={link} href={`#${link.toLowerCase().replace(' ', '-')}`} className="text-monster-silver hover:text-monster-green transition-colors">
+              <a key={link} href={`#${link.toLowerCase().replace(' ', '-')}`} className="body-text hover:text-monster-green transition-colors">
                 {link}
               </a>
             ))}
@@ -570,9 +584,9 @@ const Footer = () => {
         
         <div className="green-divider my-8" />
         
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-monster-silver/60">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-xs body-text opacity-60">
           <p>© 2025 George Toscano. All rights reserved.</p>
-          <p className="text-monster-green/60">Powered by Tama · Zildjian · Vater · Monster Energy</p>
+          <p className="text-monster-green/80">Powered by Tama · Zildjian · Vater · Monster Energy</p>
           <p>Kollab Real Estate · San Francisco Bay Area</p>
         </div>
       </div>
@@ -583,20 +597,22 @@ const Footer = () => {
 // Main App
 function App() {
   return (
-    <div className="App bg-monster-black">
-      <Navigation />
-      <main>
-        <HeroSection />
-        <WhyMeSection />
-        <AboutSection />
-        <ExpertiseSection />
-        <ExperienceSection />
-        <VisionSection />
-        <ConnectSection />
-      </main>
-      <Footer />
-      <MusicPlayer />
-    </div>
+    <ThemeProvider>
+      <div className="App">
+        <Navigation />
+        <main>
+          <HeroSection />
+          <WhyMeSection />
+          <AboutSection />
+          <ExpertiseSection />
+          <ExperienceSection />
+          <ConnectSection />
+        </main>
+        <Footer />
+        <AudioPlayer />
+        <QuickContactBar />
+      </div>
+    </ThemeProvider>
   );
 }
 
