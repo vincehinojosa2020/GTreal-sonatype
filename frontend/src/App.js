@@ -17,8 +17,6 @@ import {
   Sun,
   Moon,
   MapPin,
-  Certificate,
-  Clock,
   Target,
   Heart
 } from "@phosphor-icons/react";
@@ -31,10 +29,6 @@ const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(false);
   const toggleTheme = () => setIsDark(!isDark);
   
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
-  
   return (
     <ThemeContext.Provider value={{ isDark, toggleTheme }}>
       {children}
@@ -44,13 +38,13 @@ const ThemeProvider = ({ children }) => {
 
 // Animation variants
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
 };
 
 const staggerContainer = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+  visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
 };
 
 const AnimatedSection = ({ children, className = "" }) => {
@@ -63,7 +57,7 @@ const AnimatedSection = ({ children, className = "" }) => {
   );
 };
 
-// Audio Player
+// Audio Player - New music: JfY9owmt1eQ
 const AudioPlayer = () => {
   const { isDark } = useTheme();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -83,7 +77,7 @@ const AudioPlayer = () => {
       const initPlayer = () => {
         if (window.YT?.Player) {
           const newPlayer = new window.YT.Player('yt-player', {
-            height: '1', width: '1', videoId: 'FRV18ivjjN4',
+            height: '1', width: '1', videoId: 'JfY9owmt1eQ',
             playerVars: { autoplay: 0, controls: 0, rel: 0 },
             events: {
               onReady: () => setPlayer(newPlayer),
@@ -107,53 +101,44 @@ const AudioPlayer = () => {
   return (
     <div 
       data-testid="music-player" 
-      className={`fixed bottom-6 left-6 z-50 rounded-xl shadow-2xl transition-all duration-300 ${
+      className={`fixed bottom-6 left-6 z-50 transition-all duration-300 ${
         isDark 
-          ? 'bg-monster-dark border-2 border-monster-green/40' 
-          : 'bg-white border border-gray-200'
-      } ${isExpanded ? 'w-72' : 'w-14 h-14 cursor-pointer'}`}
+          ? 'bg-monster-dark border-2 border-monster-green/40 rounded-lg' 
+          : 'bg-white border border-gray-200 rounded-full shadow-lg'
+      } ${isExpanded ? 'w-72 rounded-xl' : 'w-14 h-14 cursor-pointer'}`}
       onClick={!isExpanded ? () => setIsExpanded(true) : undefined}
     >
       {!isExpanded ? (
         <div className="flex items-center justify-center w-full h-full">
-          <MusicNote size={24} weight="fill" className={`${isDark ? 'text-monster-green animate-pulse' : 'text-accent'}`} />
+          <MusicNote size={22} weight="fill" className={`${isDark ? 'text-monster-green animate-pulse' : 'text-black'}`} />
         </div>
       ) : (
         <div className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className={`text-xs uppercase tracking-widest font-bold ${isDark ? 'text-monster-green' : 'text-accent'}`}>
-              {isPlaying ? '♪ Playing' : '♪ Music'}
+            <span className={`text-xs uppercase tracking-widest font-bold ${isDark ? 'text-monster-green' : 'text-black'}`}>
+              {isPlaying ? '♪ Playing' : '♪ GT Vibes'}
             </span>
             <button onClick={(e) => { e.stopPropagation(); setIsExpanded(false); setIsPlaying(false); }} className="opacity-60 hover:opacity-100">
               <X size={18} />
             </button>
           </div>
-          <div className={`flex items-center gap-3 p-3 rounded-lg border ${
-            isDark ? 'bg-monster-green/10 border-monster-green/30' : 'bg-accent/5 border-accent/20'
+          <div className={`flex items-center gap-3 p-3 rounded-lg ${
+            isDark ? 'bg-monster-green/10 border border-monster-green/30' : 'bg-gray-100'
           }`}>
             <button 
               onClick={togglePlay} 
-              className={`w-12 h-12 flex items-center justify-center rounded-full transition-all ${
-                isDark ? 'bg-monster-green text-monster-black' : 'bg-accent text-white'
+              className={`w-11 h-11 flex items-center justify-center rounded-full transition-all ${
+                isDark ? 'bg-monster-green text-monster-black' : 'bg-black text-white'
               } ${isPlaying ? 'animate-pulse shadow-lg' : ''}`}
             >
-              {isPlaying ? <Pause size={20} weight="fill" /> : <Play size={20} weight="fill" className="ml-0.5" />}
+              {isPlaying ? <Pause size={18} weight="fill" /> : <Play size={18} weight="fill" className="ml-0.5" />}
             </button>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold truncate">Zildjian Vault</p>
-              <p className="text-xs opacity-60">Sean Wright</p>
-              {isPlaying && (
-                <div className="flex gap-1 mt-1">
-                  {[...Array(4)].map((_, i) => (
-                    <div key={i} className={`w-1 rounded-full animate-pulse ${isDark ? 'bg-monster-green' : 'bg-accent'}`} 
-                      style={{ height: `${Math.random() * 10 + 6}px`, animationDelay: `${i * 0.1}s` }} />
-                  ))}
-                </div>
-              )}
+              <p className="text-sm font-semibold truncate">GT Real Vibes</p>
+              <p className="text-xs opacity-60">Bay Area Energy</p>
             </div>
           </div>
           <div className="absolute -left-[9999px]"><div id="yt-player"></div></div>
-          <p className="text-xs opacity-50 mt-2 text-center">🥁 George's favorite</p>
         </div>
       )}
     </div>
@@ -167,14 +152,14 @@ const ThemeToggle = () => {
     <button
       data-testid="theme-toggle"
       onClick={toggleTheme}
-      className={`w-10 h-10 flex items-center justify-center rounded-full border-2 transition-all ${
+      className={`w-10 h-10 flex items-center justify-center rounded-full transition-all ${
         isDark 
-          ? 'border-monster-green/50 hover:border-monster-green bg-monster-green/10' 
-          : 'border-gray-300 hover:border-accent bg-gray-50'
+          ? 'bg-monster-green/10 border-2 border-monster-green/50 hover:bg-monster-green hover:text-monster-black' 
+          : 'bg-gray-100 hover:bg-black hover:text-white'
       }`}
-      title={isDark ? 'Switch to Light Mode' : 'Switch to Monster Mode 🔥'}
+      title={isDark ? 'Light Mode' : 'Monster Mode 🔥'}
     >
-      {isDark ? <Sun size={18} className="text-monster-green" /> : <Moon size={18} className="text-gray-600" />}
+      {isDark ? <Sun size={18} className="text-monster-green" /> : <Moon size={18} />}
     </button>
   );
 };
@@ -193,36 +178,32 @@ const Navigation = () => {
   return (
     <nav 
       data-testid="navigation" 
-      className={`fixed top-0 w-full z-50 px-6 lg:px-12 py-4 flex justify-between items-center transition-all duration-300 ${
+      className={`fixed top-0 w-full z-50 px-6 lg:px-12 py-5 flex justify-between items-center transition-all duration-300 ${
         isDark
-          ? `${scrolled ? 'bg-monster-black/95 backdrop-blur-md shadow-lg shadow-monster-green/5' : 'bg-transparent'}`
+          ? `${scrolled ? 'bg-monster-black/95 backdrop-blur-md' : 'bg-transparent'}`
           : `${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}`
       }`}
     >
-      <a href="#" data-testid="nav-logo" className="font-bold text-lg tracking-tight">
-        {isDark ? (
-          <span className="text-monster-green text-glow">GT REAL</span>
-        ) : (
-          <><span className="text-gray-900">George</span> <span className="text-accent">Toscano</span></>
-        )}
+      <a href="#" data-testid="nav-logo" className={`font-display text-2xl tracking-wide ${isDark ? 'text-monster-green text-glow' : 'text-black'}`}>
+        GT REAL
       </a>
       
-      <div className="hidden md:flex items-center gap-8 text-sm">
+      <div className="hidden md:flex items-center gap-10 text-sm font-medium">
         {['About', 'Services', 'Contact'].map(item => (
           <a key={item} href={`#${item.toLowerCase()}`} 
-            className={`transition-colors ${isDark ? 'text-white/70 hover:text-monster-green' : 'text-gray-600 hover:text-accent'}`}>
+            className={`hover-underline transition-colors ${isDark ? 'text-white/70 hover:text-monster-green' : 'text-gray-600 hover:text-black'}`}>
             {item}
           </a>
         ))}
       </div>
       
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <ThemeToggle />
         <a href="tel:4086036603" data-testid="nav-cta" 
-          className={`px-5 py-2.5 text-sm font-semibold transition-all ${
+          className={`px-6 py-3 text-sm font-bold uppercase tracking-wider transition-all ${
             isDark 
-              ? 'bg-monster-green text-monster-black hover:bg-monster-green-light hover:shadow-[0_0_20px_rgba(149,214,0,0.3)]' 
-              : 'bg-accent text-white hover:bg-accent-dark'
+              ? 'bg-monster-green text-monster-black hover:bg-monster-green-light' 
+              : 'bg-black text-white hover:bg-gray-800'
           }`}>
           Call Now
         </a>
@@ -231,116 +212,92 @@ const Navigation = () => {
   );
 };
 
-// Hero Section
+// Hero Section - Eden-X style for light, Monster for dark
 const HeroSection = () => {
   const { isDark } = useTheme();
   
   return (
-    <section id="hero" data-testid="hero-section" className={`min-h-screen flex items-center pt-20 ${
-      isDark ? 'bg-monster-black' : 'bg-gradient-to-br from-gray-50 to-white'
-    }`}>
+    <section id="hero" data-testid="hero-section" className={`min-h-screen flex items-center pt-24 ${isDark ? 'bg-monster-black' : 'bg-white'}`}>
       <div className="w-full px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <AnimatedSection>
-            <p className={`font-semibold text-sm uppercase tracking-widest mb-4 ${isDark ? 'text-monster-green' : 'text-accent'}`}>
-              {isDark ? 'Realtor · Technologist · Drummer' : 'Bay Area Real Estate'}
-            </p>
-            
-            <h1 className={`text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            {/* GT REAL - Big Bold Statement */}
+            <h1 className={`font-display leading-none mb-6 ${isDark ? 'text-white' : 'text-black'}`}>
               {isDark ? (
-                <>Your Home.<br />Your Future.<br /><span className="text-monster-green text-glow-animate">Unleash The Beast.</span></>
+                <span className="text-6xl md:text-7xl lg:text-8xl">
+                  YOUR HOME.<br />YOUR FUTURE.<br />
+                  <span className="text-monster-green text-glow-animate">UNLEASHED.</span>
+                </span>
               ) : (
-                <>Your Home.<br /><span className="text-accent">Your Terms.</span><br />Your Future.</>
+                <span className="text-6xl md:text-7xl lg:text-[6rem]">
+                  GET<br />
+                  <span className="italic">REAL.</span>
+                </span>
               )}
             </h1>
             
-            <p className={`text-xl mb-8 leading-relaxed max-w-lg ${isDark ? 'text-monster-silver' : 'text-gray-600'}`}>
+            <p className={`text-lg md:text-xl mb-8 max-w-md leading-relaxed ${isDark ? 'text-monster-silver' : 'text-gray-600'}`}>
               {isDark 
-                ? "I'm George Toscano — Bay Area real estate pro with 20+ years in tech and 25+ years behind the drums. Precision. Passion. Power."
-                : <>I don't just sell houses. <strong>I help families find home.</strong> In the Bay Area, that means someone who fights for you.</>
+                ? "Bay Area real estate. 20+ years tech. 25+ years drums. Precision. Passion. Power."
+                : "Bay Area Real Estate. No games. No gimmicks. Just results. That's GT Real."
               }
             </p>
             
-            {/* Contact CTA Box */}
-            <div className={`p-6 mb-8 ${
-              isDark 
-                ? 'bg-monster-green/10 border-2 border-monster-green/40' 
-                : 'bg-accent/5 border-l-4 border-accent'
-            }`}>
-              <p className={`text-lg font-medium mb-2 ${isDark ? 'text-monster-green' : 'text-gray-900'}`}>
-                Ready to make your move?
+            {/* Phone CTA - Big and Bold */}
+            <div className={`mb-8 ${isDark ? '' : 'border-l-4 border-black pl-6'}`}>
+              <p className={`text-sm uppercase tracking-widest mb-2 ${isDark ? 'text-monster-green' : 'text-gray-500'}`}>
+                Text or Call
               </p>
-              <p className={`mb-4 ${isDark ? 'text-monster-silver' : 'text-gray-600'}`}>
-                {isDark ? 'DM me, text me, or shoot me an email.' : 'Text me. Call me. I answer.'}
-              </p>
-              <a href="tel:4086036603" className={`text-2xl font-bold hover:underline ${isDark ? 'text-monster-green' : 'text-accent'}`}>
-                (408) 603-6603
+              <a href="tel:4086036603" className={`font-display text-4xl md:text-5xl hover:opacity-70 transition-opacity ${
+                isDark ? 'text-monster-green text-glow' : 'text-black'
+              }`}>
+                408.603.6603
               </a>
             </div>
 
             <div className="flex flex-wrap gap-4">
               <a href="tel:4086036603" data-testid="hero-call" 
-                className={`px-8 py-4 font-semibold inline-flex items-center gap-2 transition-all ${
+                className={`px-8 py-4 font-bold uppercase tracking-wider inline-flex items-center gap-2 transition-all ${
                   isDark 
-                    ? 'bg-monster-green text-monster-black hover:bg-monster-green-light hover:shadow-[0_0_20px_rgba(149,214,0,0.3)]' 
-                    : 'bg-accent text-white hover:bg-accent-dark'
+                    ? 'bg-monster-green text-monster-black hover:bg-monster-green-light' 
+                    : 'bg-black text-white hover:bg-gray-800'
                 }`}>
-                <Phone size={20} weight="bold" /> Call George
+                <Phone size={20} weight="bold" /> Call GT
               </a>
               <a href="sms:4086036603" data-testid="hero-text" 
-                className={`px-8 py-4 font-semibold border-2 transition-all ${
+                className={`px-8 py-4 font-bold uppercase tracking-wider border-2 transition-all ${
                   isDark 
                     ? 'border-monster-green text-monster-green hover:bg-monster-green hover:text-monster-black' 
-                    : 'border-accent text-accent hover:bg-accent hover:text-white'
+                    : 'border-black text-black hover:bg-black hover:text-white'
                 }`}>
-                Text Me Now
+                Text Now
               </a>
+            </div>
+            
+            {/* Trust indicators */}
+            <div className={`flex flex-wrap gap-6 mt-10 text-sm ${isDark ? 'text-monster-silver' : 'text-gray-500'}`}>
+              <span className="flex items-center gap-2"><MapPin size={16} /> Bay Area</span>
+              <span>Kollab RE</span>
+              {isDark && <span>Tama · Zildjian · Vater</span>}
             </div>
           </AnimatedSection>
 
           <AnimatedSection className="relative">
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=600&fit=crop"
+                src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=900&fit=crop"
                 alt="Beautiful Bay Area Home"
-                className={`w-full rounded-lg shadow-2xl ${isDark ? 'opacity-90' : ''}`}
+                className={`w-full object-cover ${isDark ? 'opacity-80 rounded-lg' : ''}`}
+                style={{ aspectRatio: isDark ? '4/5' : '3/4' }}
               />
-              <div className={`absolute -bottom-6 -left-6 p-6 shadow-xl rounded-lg max-w-xs ${
-                isDark ? 'bg-monster-dark border-2 border-monster-green/30' : 'bg-white'
-              }`}>
-                <div className="flex items-center gap-4">
-                  <div className={`w-14 h-14 rounded-full flex items-center justify-center ${
-                    isDark ? 'bg-monster-green/20' : 'bg-accent/10'
-                  }`}>
-                    <House size={28} className={isDark ? 'text-monster-green' : 'text-accent'} />
-                  </div>
-                  <div>
-                    <p className={`font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Kollab Real Estate</p>
-                    <p className={`text-sm ${isDark ? 'text-monster-silver' : 'text-gray-500'}`}>Licensed Professional</p>
-                  </div>
+              {!isDark && (
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-8">
+                  <p className="text-white font-display text-3xl">GT REAL</p>
+                  <p className="text-white/70 text-sm">George Toscano • Bay Area</p>
                 </div>
-              </div>
+              )}
             </div>
           </AnimatedSection>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Trust Bar
-const TrustBar = () => {
-  const { isDark } = useTheme();
-  return (
-    <section className={`py-6 ${isDark ? 'bg-monster-dark border-y border-monster-green/20' : 'bg-gray-900'}`}>
-      <div className="px-6 lg:px-12 max-w-7xl mx-auto">
-        <div className={`flex flex-wrap justify-center items-center gap-6 md:gap-12 text-sm ${
-          isDark ? 'text-monster-green/80' : 'text-white/80'
-        }`}>
-          <div className="flex items-center gap-2"><MapPin size={18} /> Bay Area</div>
-          <div className="flex items-center gap-2"><Certificate size={18} /> Licensed</div>
-          <div className="flex items-center gap-2"><Clock size={18} /> 20+ Yrs Tech</div>
-          {isDark && <div className="flex items-center gap-2"><MusicNote size={18} /> 25+ Yrs Drums</div>}
         </div>
       </div>
     </section>
@@ -352,31 +309,31 @@ const WhySection = () => {
   const { isDark } = useTheme();
   
   const lightReasons = [
-    { icon: Phone, title: "I Pick Up The Phone", desc: "No voicemail maze. No waiting days. You call, I answer. It's that simple." },
-    { icon: ChartLineUp, title: "I Know The Numbers", desc: "20 years in tech taught me data. I'll show you what homes are really worth." },
-    { icon: Handshake, title: "I Fight For You", desc: "In this market, you need someone in your corner. I negotiate like your future depends on it." }
+    { icon: Phone, title: "I Answer", desc: "You call. I pick up. Simple." },
+    { icon: ChartLineUp, title: "I Know Numbers", desc: "20 years in tech. Data is my language." },
+    { icon: Handshake, title: "I Fight", desc: "Your corner. Your advocate. Period." }
   ];
   
   const darkReasons = [
-    { icon: Target, title: "Precision & Power", desc: "From Stanford Children's Health to your home purchase — same precision, same intensity." },
-    { icon: ChartLineUp, title: "Data-Driven", desc: "20+ years in tech. I leverage data and market intelligence to give you the edge." },
-    { icon: Heart, title: "Heart-First", desc: "Dedicated to every client as if you were a patient. That's my operating system." }
+    { icon: Target, title: "Precision", desc: "Stanford-level accuracy in every deal." },
+    { icon: ChartLineUp, title: "Data", desc: "Tech mind. Market intelligence. Edge." },
+    { icon: Heart, title: "Heart", desc: "Every client like a patient. Always." }
   ];
   
   const reasons = isDark ? darkReasons : lightReasons;
 
   return (
-    <section id="about" data-testid="why-section" className={`py-20 lg:py-32 ${isDark ? 'bg-monster-dark' : 'bg-white'}`}>
+    <section id="about" data-testid="why-section" className={`py-24 lg:py-32 ${isDark ? 'bg-monster-dark' : 'bg-gray-50'}`}>
       <div className="px-6 lg:px-12 max-w-7xl mx-auto">
-        <AnimatedSection className="text-center mb-16">
-          <p className={`font-semibold text-sm uppercase tracking-widest mb-4 ${isDark ? 'text-monster-green' : 'text-accent'}`}>
-            Why Work With Me
+        <AnimatedSection className="mb-16">
+          <p className={`text-sm uppercase tracking-widest mb-4 ${isDark ? 'text-monster-green' : 'text-gray-500'}`}>
+            Why GT Real
           </p>
-          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h2 className={`font-display text-5xl md:text-6xl lg:text-7xl ${isDark ? 'text-white' : 'text-black'}`}>
             {isDark ? (
-              <>Where Precision<br /><span className="text-monster-green text-glow">Meets Raw Energy.</span></>
+              <>PRECISION.<br /><span className="text-monster-green text-glow">PASSION.</span><br />POWER.</>
             ) : (
-              <>You Deserve Better.<br /><span className="text-accent">Here's What You Get.</span></>
+              <>REAL<br />RESULTS.</>
             )}
           </h2>
         </AnimatedSection>
@@ -384,17 +341,13 @@ const WhySection = () => {
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-3 gap-8">
           {reasons.map((item, i) => (
             <motion.div key={i} variants={fadeUp} data-testid={`why-card-${i}`} 
-              className={`p-8 transition-all hover:shadow-lg ${
+              className={`p-8 transition-all ${
                 isDark 
                   ? 'bg-monster-black border border-monster-gray hover:border-monster-green/50' 
-                  : 'bg-gray-50 border border-gray-100'
+                  : 'bg-white hover:shadow-xl'
               }`}>
-              <div className={`w-14 h-14 rounded-lg flex items-center justify-center mb-6 ${
-                isDark ? 'bg-monster-green/10' : 'bg-accent/10'
-              }`}>
-                <item.icon size={28} className={isDark ? 'text-monster-green' : 'text-accent'} />
-              </div>
-              <h3 className={`text-xl font-bold mb-3 ${isDark ? 'text-white' : 'text-gray-900'}`}>{item.title}</h3>
+              <item.icon size={32} className={`mb-6 ${isDark ? 'text-monster-green' : 'text-black'}`} weight="bold" />
+              <h3 className={`font-display text-2xl mb-3 ${isDark ? 'text-white' : 'text-black'}`}>{item.title}</h3>
               <p className={isDark ? 'text-monster-silver' : 'text-gray-600'}>{item.desc}</p>
             </motion.div>
           ))}
@@ -408,42 +361,39 @@ const WhySection = () => {
 const ServicesSection = () => {
   const { isDark } = useTheme();
   const services = [
-    { title: "Buying A Home", desc: "First home or fifth—I'll find you the right one at the right price.", cta: "Let's Find Your Home" },
-    { title: "Selling Your Home", desc: "Strategic pricing, professional marketing, tough negotiation. Top dollar.", cta: "Get Your Home's Value" },
-    { title: "Investment Properties", desc: "Bay Area real estate builds wealth. Let me show you where smart money goes.", cta: "Explore Opportunities" }
+    { title: "Buy", desc: "Find your home. Right price. Right time.", cta: "Let's Find It" },
+    { title: "Sell", desc: "Top dollar. Strategic. Relentless.", cta: "Get Your Value" },
+    { title: "Invest", desc: "Build wealth. Bay Area opportunities.", cta: "Let's Talk" }
   ];
 
   return (
-    <section id="services" data-testid="services-section" className={`py-20 lg:py-32 ${isDark ? 'bg-monster-black' : 'bg-gray-50'}`}>
+    <section id="services" data-testid="services-section" className={`py-24 lg:py-32 ${isDark ? 'bg-monster-black' : 'bg-white'}`}>
       <div className="px-6 lg:px-12 max-w-7xl mx-auto">
         <AnimatedSection className="text-center mb-16">
-          <p className={`font-semibold text-sm uppercase tracking-widest mb-4 ${isDark ? 'text-monster-green' : 'text-accent'}`}>
-            How I Help
-          </p>
-          <h2 className={`text-3xl md:text-4xl lg:text-5xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-            What Do You Need?<br />
-            <span className={isDark ? 'text-monster-green text-glow' : 'text-accent'}>I'm Ready.</span>
+          <h2 className={`font-display text-5xl md:text-6xl ${isDark ? 'text-white' : 'text-black'}`}>
+            WHAT DO YOU<br />
+            <span className={isDark ? 'text-monster-green text-glow' : 'italic'}>NEED?</span>
           </h2>
         </AnimatedSection>
 
-        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-3 gap-8">
+        <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid md:grid-cols-3 gap-6">
           {services.map((item, i) => (
-            <motion.div key={i} variants={fadeUp} data-testid={`service-card-${i}`} 
-              className={`p-8 transition-all group ${
+            <motion.a key={i} href="tel:4086036603" variants={fadeUp} data-testid={`service-card-${i}`} 
+              className={`p-10 text-center transition-all group cursor-pointer ${
                 isDark 
-                  ? 'bg-monster-dark border border-monster-gray hover:border-monster-green/50' 
-                  : 'bg-white border border-gray-100 shadow-sm hover:shadow-xl'
+                  ? 'bg-monster-dark border border-monster-gray hover:border-monster-green' 
+                  : 'bg-gray-50 hover:bg-black hover:text-white'
               }`}>
-              <h3 className={`text-2xl font-bold mb-4 transition-colors ${
-                isDark ? 'text-white group-hover:text-monster-green' : 'text-gray-900 group-hover:text-accent'
+              <h3 className={`font-display text-4xl mb-4 ${
+                isDark ? 'text-monster-green' : 'text-black group-hover:text-white'
               }`}>{item.title}</h3>
-              <p className={`mb-6 ${isDark ? 'text-monster-silver' : 'text-gray-600'}`}>{item.desc}</p>
-              <a href="tel:4086036603" className={`font-semibold inline-flex items-center gap-2 group-hover:gap-3 transition-all ${
-                isDark ? 'text-monster-green' : 'text-accent'
+              <p className={`mb-6 ${isDark ? 'text-monster-silver' : 'text-gray-600 group-hover:text-gray-300'}`}>{item.desc}</p>
+              <span className={`inline-flex items-center gap-2 font-bold uppercase tracking-wider text-sm ${
+                isDark ? 'text-monster-green' : 'group-hover:text-white'
               }`}>
-                {item.cta} <ArrowRight size={18} />
-              </a>
-            </motion.div>
+                {item.cta} <ArrowRight size={16} />
+              </span>
+            </motion.a>
           ))}
         </motion.div>
       </div>
@@ -456,43 +406,57 @@ const CTASection = () => {
   const { isDark } = useTheme();
   
   return (
-    <section id="contact" data-testid="cta-section" className={`py-20 lg:py-32 ${isDark ? 'bg-monster-dark' : 'bg-gray-900'} text-white`}>
+    <section id="contact" data-testid="cta-section" className={`py-24 lg:py-32 ${isDark ? 'bg-monster-dark' : 'bg-black'} text-white`}>
       <div className="px-6 lg:px-12 max-w-4xl mx-auto text-center">
         <AnimatedSection>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">
+          <h2 className="font-display text-5xl md:text-6xl lg:text-7xl mb-8">
             {isDark ? (
-              <>Ready to Make<br /><span className="text-monster-green text-glow-animate">Your Move?</span></>
+              <>LET'S<br /><span className="text-monster-green text-glow-animate">GO.</span></>
             ) : (
-              <>Stop Scrolling.<br /><span className="text-accent">Start Moving.</span></>
+              <>GET<br /><span className="italic">MOVING.</span></>
             )}
           </h2>
-          <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            {isDark 
-              ? "DM me, text me, or shoot me an email — let's make it happen."
-              : <>The Bay Area market moves fast. <strong>And neither should you wait.</strong></>
-            }
+          
+          <p className="text-xl text-gray-400 mb-10 max-w-lg mx-auto">
+            Bay Area market moves fast. You should too.
           </p>
           
-          <div className={`p-8 rounded-lg mb-8 ${isDark ? 'bg-monster-black/50 border border-monster-green/30' : 'bg-white/10 backdrop-blur-sm'}`}>
-            <p className={`text-2xl md:text-3xl font-bold mb-2 ${isDark ? 'text-monster-green' : 'text-accent'}`}>Text Me Today</p>
-            <a href="tel:4086036603" className="text-3xl md:text-4xl font-bold hover:text-accent transition-colors">(408) 603-6603</a>
-            <p className="text-gray-400 mt-4">Email: <a href="mailto:gtdrums@gmail.com" className="text-white hover:text-accent">gtdrums@gmail.com</a></p>
+          <div className="mb-10">
+            <p className={`text-sm uppercase tracking-widest mb-3 ${isDark ? 'text-monster-green' : 'text-gray-500'}`}>
+              Call or Text GT
+            </p>
+            <a href="tel:4086036603" className={`font-display text-5xl md:text-6xl lg:text-7xl hover:opacity-70 transition-opacity ${
+              isDark ? 'text-monster-green text-glow' : 'text-white'
+            }`}>
+              408.603.6603
+            </a>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:4086036603" className={`px-8 py-4 font-semibold inline-flex items-center gap-2 transition-all ${
+          <div className="flex flex-wrap justify-center gap-4 mb-10">
+            <a href="tel:4086036603" className={`px-10 py-4 font-bold uppercase tracking-wider transition-all ${
               isDark 
                 ? 'bg-monster-green text-monster-black hover:bg-monster-green-light' 
-                : 'bg-accent text-white hover:bg-accent-dark'
+                : 'bg-white text-black hover:bg-gray-100'
             }`}>
-              <Phone size={20} weight="bold" /> Call Now
+              <Phone size={20} weight="bold" className="inline mr-2" /> Call Now
             </a>
-            <a href="sms:4086036603" className="bg-white text-gray-900 px-8 py-4 font-semibold hover:bg-gray-100 transition-colors">
-              Text George
+            <a href="mailto:gtdrums@gmail.com" className="px-10 py-4 font-bold uppercase tracking-wider border-2 border-white/30 hover:border-white transition-colors">
+              <Envelope size={20} className="inline mr-2" /> Email
             </a>
+          </div>
+          
+          <div className="flex justify-center gap-4">
             <a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" 
-              className="border-2 border-white/30 hover:border-white px-8 py-4 font-semibold inline-flex items-center gap-2 transition-colors">
-              <LinkedinLogo size={20} /> Connect
+              className={`w-12 h-12 flex items-center justify-center transition-colors ${
+                isDark ? 'bg-monster-green/10 hover:bg-monster-green text-monster-green hover:text-monster-black' : 'bg-white/10 hover:bg-white hover:text-black'
+              }`}>
+              <LinkedinLogo size={22} weight="bold" />
+            </a>
+            <a href="https://instagram.com/gtreal.io" target="_blank" rel="noopener noreferrer" 
+              className={`w-12 h-12 flex items-center justify-center transition-colors ${
+                isDark ? 'bg-monster-green/10 hover:bg-monster-green text-monster-green hover:text-monster-black' : 'bg-white/10 hover:bg-white hover:text-black'
+              }`}>
+              <InstagramLogo size={22} weight="bold" />
             </a>
           </div>
         </AnimatedSection>
@@ -505,31 +469,15 @@ const CTASection = () => {
 const Footer = () => {
   const { isDark } = useTheme();
   return (
-    <footer data-testid="footer" className={`py-12 ${isDark ? 'bg-monster-black border-t border-monster-green/20' : 'bg-gray-950'} text-white`}>
+    <footer data-testid="footer" className={`py-10 ${isDark ? 'bg-monster-black border-t border-monster-green/20' : 'bg-gray-950'} text-white`}>
       <div className="px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-          <div>
-            <p className={`font-bold text-lg ${isDark ? 'text-monster-green' : ''}`}>George Toscano</p>
-            <p className="text-gray-400 text-sm">Kollab Real Estate • Bay Area</p>
+          <div className="text-center md:text-left">
+            <p className={`font-display text-2xl ${isDark ? 'text-monster-green' : ''}`}>GT REAL</p>
+            <p className="text-gray-500 text-sm">George Toscano • Kollab Real Estate</p>
             {isDark && <p className="text-monster-green/60 text-xs mt-1">Tama · Zildjian · Vater</p>}
           </div>
-          <div className="flex gap-4">
-            <a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" 
-              className={`w-10 h-10 flex items-center justify-center transition-colors ${
-                isDark ? 'bg-monster-green/10 hover:bg-monster-green hover:text-monster-black' : 'bg-white/10 hover:bg-accent'
-              }`}>
-              <LinkedinLogo size={20} />
-            </a>
-            <a href="https://instagram.com/gtreal.io" target="_blank" rel="noopener noreferrer" 
-              className={`w-10 h-10 flex items-center justify-center transition-colors ${
-                isDark ? 'bg-monster-green/10 hover:bg-monster-green hover:text-monster-black' : 'bg-white/10 hover:bg-accent'
-              }`}>
-              <InstagramLogo size={20} />
-            </a>
-          </div>
-        </div>
-        <div className="border-t border-white/10 mt-8 pt-8 text-center text-sm text-gray-500">
-          <p>© 2025 George Toscano. All rights reserved.</p>
+          <p className="text-gray-600 text-xs">© 2025 GT Real. Bay Area.</p>
         </div>
       </div>
     </footer>
@@ -548,11 +496,10 @@ function App() {
 function AppContent() {
   const { isDark } = useTheme();
   return (
-    <div className={`App ${isDark ? 'bg-monster-black text-white' : 'bg-white text-gray-900'}`}>
+    <div className={`App ${isDark ? 'bg-monster-black text-white' : 'bg-white text-black'}`}>
       <Navigation />
       <main>
         <HeroSection />
-        <TrustBar />
         <WhySection />
         <ServicesSection />
         <CTASection />
