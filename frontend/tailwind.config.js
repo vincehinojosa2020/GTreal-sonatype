@@ -13,6 +13,18 @@ module.exports = {
                         accent: ['Outfit', 'sans-serif'],
                 },
                 colors: {
+                        // New prestigious dark color scheme
+                        navy: '#0A1628',
+                        'navy-light': '#132337',
+                        'navy-lighter': '#1C3147',
+                        gold: '#C9A962',
+                        'gold-light': '#D4B978',
+                        'gold-dark': '#A88B4A',
+                        slate: '#94A3B8',
+                        'slate-dark': '#64748B',
+                        ivory: '#F8F6F3',
+                        'ivory-dark': '#E8E4DE',
+                        // Keep old colors for compatibility
                         cream: '#FAF8F5',
                         'warm-grey': '#E8E4DE',
                         charcoal: '#2C2C2C',
@@ -72,7 +84,7 @@ module.exports = {
                         },
                         'accordion-up': {
                                 from: { height: 'var(--radix-accordion-content-height)' },
-                                to: { height: '0' }
+                                to: { height: 'var(--radix-accordion-content-height)' }
                         },
                         'fade-up': {
                                 from: { opacity: '0', transform: 'translateY(40px)' },
@@ -81,13 +93,18 @@ module.exports = {
                         'marquee': {
                                 from: { transform: 'translateX(0)' },
                                 to: { transform: 'translateX(-50%)' }
+                        },
+                        'pulse-gold': {
+                                '0%, 100%': { boxShadow: '0 0 0 0 rgba(201, 169, 98, 0.4)' },
+                                '50%': { boxShadow: '0 0 0 8px rgba(201, 169, 98, 0)' }
                         }
                 },
                 animation: {
                         'accordion-down': 'accordion-down 0.2s ease-out',
                         'accordion-up': 'accordion-up 0.2s ease-out',
                         'fade-up': 'fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards',
-                        'marquee': 'marquee 30s linear infinite'
+                        'marquee': 'marquee 30s linear infinite',
+                        'pulse-gold': 'pulse-gold 2s ease-in-out infinite'
                 }
         }
   },

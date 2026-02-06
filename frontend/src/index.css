@@ -5,12 +5,16 @@
 @tailwind utilities;
 
 :root {
-    --cream: #FAF8F5;
-    --warm-grey: #E8E4DE;
-    --charcoal: #2C2C2C;
-    --charcoal-light: #6B6560;
-    --taupe: #9C8B7A;
-    --dark-charcoal: #1E1E1E;
+    --navy: #0A1628;
+    --navy-light: #132337;
+    --navy-lighter: #1C3147;
+    --gold: #C9A962;
+    --gold-light: #D4B978;
+    --gold-dark: #A88B4A;
+    --slate: #94A3B8;
+    --slate-dark: #64748B;
+    --ivory: #F8F6F3;
+    --ivory-dark: #E8E4DE;
 }
 
 html {
@@ -24,8 +28,8 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: var(--cream);
-    color: var(--charcoal);
+    background-color: var(--navy);
+    color: var(--ivory);
 }
 
 /* Serif headings */
@@ -39,47 +43,47 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 ::-webkit-scrollbar-track {
-    background: var(--cream);
+    background: var(--navy);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: var(--taupe);
+    background: var(--gold);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--charcoal-light);
+    background: var(--gold-light);
 }
 
 /* Selection color */
 ::selection {
-    background-color: var(--taupe);
-    color: var(--cream);
+    background-color: var(--gold);
+    color: var(--navy);
 }
 
 @layer base {
     :root {
-        --background: 40 33% 97%;
-        --foreground: 0 0% 17%;
-        --card: 0 0% 100%;
-        --card-foreground: 0 0% 17%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 17%;
-        --primary: 0 0% 17%;
-        --primary-foreground: 40 33% 97%;
-        --secondary: 30 15% 90%;
-        --secondary-foreground: 0 0% 17%;
-        --muted: 30 15% 90%;
-        --muted-foreground: 20 5% 40%;
-        --accent: 26 13% 54%;
-        --accent-foreground: 40 33% 97%;
+        --background: 216 55% 10%;
+        --foreground: 40 20% 97%;
+        --card: 216 45% 13%;
+        --card-foreground: 40 20% 97%;
+        --popover: 216 45% 13%;
+        --popover-foreground: 40 20% 97%;
+        --primary: 43 48% 56%;
+        --primary-foreground: 216 55% 10%;
+        --secondary: 216 35% 18%;
+        --secondary-foreground: 40 20% 97%;
+        --muted: 216 35% 18%;
+        --muted-foreground: 215 20% 65%;
+        --accent: 43 48% 56%;
+        --accent-foreground: 216 55% 10%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
-        --border: 30 15% 85%;
-        --input: 30 15% 85%;
-        --ring: 26 13% 54%;
+        --border: 216 35% 25%;
+        --input: 216 35% 25%;
+        --ring: 43 48% 56%;
         --radius: 0.25rem;
-        --chart-1: 12 76% 61%;
+        --chart-1: 43 48% 56%;
         --chart-2: 173 58% 39%;
         --chart-3: 197 37% 24%;
         --chart-4: 43 74% 66%;
@@ -92,36 +96,36 @@ h1, h2, h3, h4, h5, h6 {
         @apply border-border;
     }
     body {
-        @apply bg-cream text-charcoal;
+        @apply bg-navy text-ivory;
     }
 }
 
 /* Utility classes for the site */
 @layer components {
     .section-label {
-        @apply text-xs md:text-sm uppercase tracking-[0.2em] font-semibold text-taupe font-accent;
+        @apply text-xs md:text-sm uppercase tracking-[0.25em] font-semibold text-gold font-accent;
     }
     
     .section-heading {
-        @apply text-4xl md:text-5xl lg:text-6xl font-light tracking-tight font-serif text-charcoal;
+        @apply text-4xl md:text-5xl lg:text-6xl font-light tracking-tight font-serif text-ivory;
     }
     
     .body-text {
-        @apply text-base md:text-lg leading-relaxed text-charcoal-light;
+        @apply text-base md:text-lg leading-relaxed text-slate;
     }
     
     .btn-primary {
-        @apply bg-charcoal text-cream px-8 py-3 text-sm uppercase tracking-widest font-medium font-accent
-               hover:bg-taupe transition-colors duration-300;
+        @apply bg-gold text-navy px-8 py-3 text-sm uppercase tracking-widest font-medium font-accent
+               hover:bg-gold-light transition-colors duration-300;
     }
     
     .btn-secondary {
-        @apply border border-charcoal text-charcoal px-8 py-3 text-sm uppercase tracking-widest font-accent
-               hover:bg-charcoal hover:text-cream transition-all duration-300;
+        @apply border border-gold text-gold px-8 py-3 text-sm uppercase tracking-widest font-accent
+               hover:bg-gold hover:text-navy transition-all duration-300;
     }
     
     .card-editorial {
-        @apply bg-white p-8 md:p-12 border border-warm-grey hover:border-taupe/50 transition-colors duration-500;
+        @apply bg-navy-light p-8 md:p-12 border border-navy-lighter hover:border-gold/30 transition-colors duration-500;
     }
 }
 
@@ -155,4 +159,9 @@ h1, h2, h3, h4, h5, h6 {
         border-top-color: inherit;
         border-bottom-color: inherit;
     }
+}
+
+/* Hide the Made by Emergent badge */
+#emergent-badge {
+    display: none !important;
 }
