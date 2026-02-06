@@ -13,24 +13,22 @@ module.exports = {
                         accent: ['Outfit', 'sans-serif'],
                 },
                 colors: {
-                        // New prestigious dark color scheme
+                        // Monster Energy inspired color scheme
+                        'monster-green': '#95D600',
+                        'monster-green-light': '#A8E000',
+                        'monster-green-dark': '#7AB800',
+                        'monster-black': '#0D0D0D',
+                        'monster-dark': '#1A1A1A',
+                        'monster-darker': '#121212',
+                        'monster-gray': '#2A2A2A',
+                        'monster-silver': '#B8B8B8',
+                        'monster-white': '#F5F5F5',
+                        // Keep compatibility colors
                         navy: '#0A1628',
                         'navy-light': '#132337',
-                        'navy-lighter': '#1C3147',
-                        gold: '#C9A962',
-                        'gold-light': '#D4B978',
-                        'gold-dark': '#A88B4A',
+                        gold: '#95D600',
                         slate: '#94A3B8',
-                        'slate-dark': '#64748B',
                         ivory: '#F8F6F3',
-                        'ivory-dark': '#E8E4DE',
-                        // Keep old colors for compatibility
-                        cream: '#FAF8F5',
-                        'warm-grey': '#E8E4DE',
-                        charcoal: '#2C2C2C',
-                        'charcoal-light': '#6B6560',
-                        taupe: '#9C8B7A',
-                        'dark-charcoal': '#1E1E1E',
                         background: 'hsl(var(--background))',
                         foreground: 'hsl(var(--foreground))',
                         card: {
@@ -64,13 +62,6 @@ module.exports = {
                         border: 'hsl(var(--border))',
                         input: 'hsl(var(--input))',
                         ring: 'hsl(var(--ring))',
-                        chart: {
-                                '1': 'hsl(var(--chart-1))',
-                                '2': 'hsl(var(--chart-2))',
-                                '3': 'hsl(var(--chart-3))',
-                                '4': 'hsl(var(--chart-4))',
-                                '5': 'hsl(var(--chart-5))'
-                        }
                 },
                 borderRadius: {
                         lg: 'var(--radius)',
@@ -84,7 +75,7 @@ module.exports = {
                         },
                         'accordion-up': {
                                 from: { height: 'var(--radix-accordion-content-height)' },
-                                to: { height: 'var(--radix-accordion-content-height)' }
+                                to: { height: '0' }
                         },
                         'fade-up': {
                                 from: { opacity: '0', transform: 'translateY(40px)' },
@@ -94,17 +85,22 @@ module.exports = {
                                 from: { transform: 'translateX(0)' },
                                 to: { transform: 'translateX(-50%)' }
                         },
-                        'pulse-gold': {
-                                '0%, 100%': { boxShadow: '0 0 0 0 rgba(201, 169, 98, 0.4)' },
-                                '50%': { boxShadow: '0 0 0 8px rgba(201, 169, 98, 0)' }
+                        'pulse-green': {
+                                '0%, 100%': { boxShadow: '0 0 0 0 rgba(149, 214, 0, 0.4)' },
+                                '50%': { boxShadow: '0 0 20px 4px rgba(149, 214, 0, 0.2)' }
+                        },
+                        'glow': {
+                                '0%, 100%': { textShadow: '0 0 10px rgba(149, 214, 0, 0.5)' },
+                                '50%': { textShadow: '0 0 20px rgba(149, 214, 0, 0.8), 0 0 30px rgba(149, 214, 0, 0.4)' }
                         }
                 },
                 animation: {
                         'accordion-down': 'accordion-down 0.2s ease-out',
                         'accordion-up': 'accordion-up 0.2s ease-out',
                         'fade-up': 'fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards',
-                        'marquee': 'marquee 30s linear infinite',
-                        'pulse-gold': 'pulse-gold 2s ease-in-out infinite'
+                        'marquee': 'marquee 25s linear infinite',
+                        'pulse-green': 'pulse-green 2s ease-in-out infinite',
+                        'glow': 'glow 2s ease-in-out infinite'
                 }
         }
   },
