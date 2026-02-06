@@ -5,9 +5,19 @@
 @tailwind utilities;
 
 :root {
+  /* Light mode - Professional Green */
   --accent: #16a34a;
   --accent-dark: #15803d;
   --accent-light: #22c55e;
+  
+  /* Monster Energy colors */
+  --monster-green: #95D600;
+  --monster-green-light: #A8E000;
+  --monster-green-dark: #7AB800;
+  --monster-black: #0D0D0D;
+  --monster-dark: #1A1A1A;
+  --monster-gray: #2A2A2A;
+  --monster-silver: #B8B8B8;
 }
 
 html {
@@ -18,11 +28,9 @@ body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
-  background-color: #ffffff;
-  color: #111827;
 }
 
-/* Accent color utilities */
+/* Light mode accent utilities */
 .text-accent { color: var(--accent); }
 .bg-accent { background-color: var(--accent); }
 .bg-accent-dark { background-color: var(--accent-dark); }
@@ -34,45 +42,39 @@ body {
 .bg-accent\/10 { background-color: rgba(22, 163, 74, 0.1); }
 .border-accent\/20 { border-color: rgba(22, 163, 74, 0.2); }
 
-/* Navigation */
-.nav-scrolled {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+/* Monster Green utilities */
+.text-monster-green { color: var(--monster-green); }
+.bg-monster-green { background-color: var(--monster-green); }
+.bg-monster-green-light { background-color: var(--monster-green-light); }
+.bg-monster-black { background-color: var(--monster-black); }
+.bg-monster-dark { background-color: var(--monster-dark); }
+.text-monster-silver { color: var(--monster-silver); }
+.border-monster-green\/20 { border-color: rgba(149, 214, 0, 0.2); }
+.border-monster-green\/30 { border-color: rgba(149, 214, 0, 0.3); }
+.border-monster-green\/40 { border-color: rgba(149, 214, 0, 0.4); }
+.border-monster-green\/50 { border-color: rgba(149, 214, 0, 0.5); }
+.bg-monster-green\/10 { background-color: rgba(149, 214, 0, 0.1); }
+.bg-monster-green\/20 { background-color: rgba(149, 214, 0, 0.2); }
+.border-monster-gray { border-color: var(--monster-gray); }
+.hover\:border-monster-green:hover { border-color: var(--monster-green); }
+.hover\:bg-monster-green:hover { background-color: var(--monster-green); }
+.hover\:bg-monster-green-light:hover { background-color: var(--monster-green-light); }
+.hover\:text-monster-green:hover { color: var(--monster-green); }
+.text-monster-black { color: var(--monster-black); }
+.hover\:text-monster-black:hover { color: var(--monster-black); }
+
+/* Text glow effect for Monster mode */
+.text-glow {
+  text-shadow: 0 0 10px rgba(149, 214, 0, 0.5), 0 0 20px rgba(149, 214, 0, 0.3);
 }
 
-/* Music Player */
-.music-player-float {
-  position: fixed;
-  bottom: 24px;
-  left: 24px;
-  z-index: 1000;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-  transition: all 0.3s ease;
+.text-glow-animate {
+  animation: glow 2s ease-in-out infinite;
 }
 
-.music-player-float:hover {
-  box-shadow: 0 15px 50px rgba(0,0,0,0.2);
-}
-
-.music-player-collapsed {
-  width: 56px;
-  height: 56px;
-  cursor: pointer;
-}
-
-.music-player-expanded-audio {
-  width: 280px;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.animate-pulse {
-  animation: pulse 1.5s ease-in-out infinite;
+@keyframes glow {
+  0%, 100% { text-shadow: 0 0 10px rgba(149, 214, 0, 0.5); }
+  50% { text-shadow: 0 0 20px rgba(149, 214, 0, 0.8), 0 0 30px rgba(149, 214, 0, 0.4); }
 }
 
 /* Selection */
@@ -81,10 +83,18 @@ body {
   color: white;
 }
 
+.dark ::selection {
+  background-color: var(--monster-green);
+  color: var(--monster-black);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #f3f4f6; }
 ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 4px; }
+
+.dark::-webkit-scrollbar-track { background: var(--monster-black); }
+.dark::-webkit-scrollbar-thumb { background: var(--monster-green); }
 
 /* Hide Emergent badge */
 #emergent-badge { display: none !important; }
@@ -99,4 +109,14 @@ body {
     --ring: 142 76% 36%;
     --radius: 0.25rem;
   }
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
 }
