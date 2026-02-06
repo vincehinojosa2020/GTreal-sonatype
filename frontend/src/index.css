@@ -161,7 +161,13 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
-/* Hide the Made by Emergent badge */
-#emergent-badge {
+/* Hide the Made by Emergent badge - multiple selectors for certainty */
+#emergent-badge,
+a[href*="emergent.sh"][style*="fixed"],
+a[style*="Made with Emergent"],
+[id="emergent-badge"] {
     display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
