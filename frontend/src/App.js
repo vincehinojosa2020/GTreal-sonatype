@@ -63,19 +63,81 @@ const AnimatedSection = ({ children, className = "" }) => {
   );
 };
 
-// Audio Player Component (Audio-only style)
+// Audio Player Component (Audio-only style with working YouTube)
 const AudioPlayer = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef(null);
+  const [player, setPlayer] = useState(null);
+  const playerContainerRef = useRef(null);
 
-  // Using a hidden YouTube iframe for audio
+  // Load YouTube API
+  useEffect(() => {
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+    }
+  }, []);
+
+  // Initialize player when expanded
+  useEffect(() => {
+    if (isExpanded && !player && window.YT && window.YT.Player) {
+      const newPlayer = new window.YT.Player('yt-player', {
+        height: '1',
+        width: '1',
+        videoId: 'FRV18ivjjN4',
+        playerVars: {
+          autoplay: 0,
+          controls: 0,
+          disablekb: 1,
+          fs: 0,
+          modestbranding: 1,
+          rel: 0,
+        },
+        events: {
+          onReady: () => setPlayer(newPlayer),
+          onStateChange: (event) => {
+            if (event.data === window.YT.PlayerState.ENDED) {
+              setIsPlaying(false);
+            }
+          }
+        }
+      });
+    } else if (isExpanded && !player) {
+      // If YT API not ready yet, wait and retry
+      window.onYouTubeIframeAPIReady = () => {
+        const newPlayer = new window.YT.Player('yt-player', {
+          height: '1',
+          width: '1',
+          videoId: 'FRV18ivjjN4',
+          playerVars: {
+            autoplay: 0,
+            controls: 0,
+            disablekb: 1,
+            fs: 0,
+            modestbranding: 1,
+            rel: 0,
+          },
+          events: {
+            onReady: () => setPlayer(newPlayer),
+            onStateChange: (event) => {
+              if (event.data === window.YT.PlayerState.ENDED) {
+                setIsPlaying(false);
+              }
+            }
+          }
+        });
+      };
+    }
+  }, [isExpanded, player]);
+
   const togglePlay = () => {
-    if (audioRef.current) {
+    if (player && player.playVideo && player.pauseVideo) {
       if (isPlaying) {
-        audioRef.current.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+        player.pauseVideo();
       } else {
-        audioRef.current.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+        player.playVideo();
       }
       setIsPlaying(!isPlaying);
     }
@@ -83,8 +145,11 @@ const AudioPlayer = () => {
 
   const closePlayer = (e) => {
     e.stopPropagation();
-    setIsExpanded(false);
+    if (player && player.pauseVideo) {
+      player.pauseVideo();
+    }
     setIsPlaying(false);
+    setIsExpanded(false);
   };
 
   return (
@@ -94,7 +159,7 @@ const AudioPlayer = () => {
       onClick={!isExpanded ? () => setIsExpanded(true) : undefined}
     >
       {!isExpanded ? (
-        <div className="flex items-center justify-center w-full h-full animate-pulse-green">
+        <div className="flex items-center justify-center w-full h-full animate-pulse-green cursor-pointer">
           <MusicNote size={28} weight="fill" className="text-monster-green" />
         </div>
       ) : (
@@ -102,7 +167,9 @@ const AudioPlayer = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <MusicNote size={18} weight="fill" className="text-monster-green" />
-              <span className="text-xs uppercase tracking-widest text-monster-green font-accent font-bold">Now Playing</span>
+              <span className="text-xs uppercase tracking-widest text-monster-green font-accent font-bold">
+                {isPlaying ? 'Now Playing' : 'Music'}
+              </span>
             </div>
             <button onClick={closePlayer} data-testid="music-player-close" className="text-current opacity-60 hover:opacity-100 transition-opacity">
               <X size={20} />
@@ -110,30 +177,40 @@ const AudioPlayer = () => {
           </div>
           
           {/* Audio-only style player */}
-          <div className="flex items-center gap-4 p-4 bg-current/5 rounded-lg border border-monster-green/20">
+          <div className="flex items-center gap-4 p-4 bg-monster-green/5 rounded-lg border border-monster-green/30">
             <button 
               onClick={togglePlay}
               data-testid="audio-play-btn"
-              className="w-12 h-12 flex items-center justify-center bg-monster-green text-monster-black rounded-full hover:bg-monster-green-light transition-colors"
+              className={`w-14 h-14 flex items-center justify-center bg-monster-green text-monster-black rounded-full hover:bg-monster-green-light transition-all ${isPlaying ? 'animate-pulse shadow-[0_0_20px_rgba(149,214,0,0.5)]' : ''}`}
             >
-              {isPlaying ? <Pause size={20} weight="fill" /> : <Play size={20} weight="fill" />}
+              {isPlaying ? <Pause size={24} weight="fill" /> : <Play size={24} weight="fill" className="ml-1" />}
             </button>
-            <div className="flex-1">
-              <p className="font-semibold text-sm">Zildjian Vault Performance</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-sm truncate">Zildjian Vault Performance</p>
               <p className="text-xs opacity-60">Sean Wright</p>
+              {isPlaying && (
+                <div className="flex gap-1 mt-2">
+                  {[...Array(5)].map((_, i) => (
+                    <div 
+                      key={i} 
+                      className="w-1 bg-monster-green rounded-full animate-pulse"
+                      style={{ 
+                        height: `${Math.random() * 12 + 8}px`,
+                        animationDelay: `${i * 0.1}s`
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
           
-          {/* Hidden YouTube iframe for audio */}
-          <iframe
-            ref={audioRef}
-            className="hidden"
-            src="https://www.youtube.com/embed/FRV18ivjjN4?enablejsapi=1&rel=0"
-            title="Audio Player"
-            allow="autoplay"
-          />
+          {/* Hidden YouTube player container */}
+          <div className="absolute -left-[9999px]" ref={playerContainerRef}>
+            <div id="yt-player"></div>
+          </div>
           
-          <p className="text-xs opacity-50 mt-3 text-center">George's favorite drum performance</p>
+          <p className="text-xs opacity-50 mt-3 text-center">🥁 George's favorite drum performance</p>
         </div>
       )}
     </div>
