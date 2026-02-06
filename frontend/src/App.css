@@ -1,18 +1,17 @@
-/* GT Real - Monster Energy x Drums Inspired Theme */
+/* GT Real - Monster Energy x Drums Theme with Light/Dark Mode */
 
-/* Glassmorphism navigation */
+/* Navigation */
 .nav-glass {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    background-color: rgba(13, 13, 13, 0.95);
-    border-bottom: 1px solid rgba(149, 214, 0, 0.15);
+    transition: all 0.3s ease;
 }
 
 .nav-scrolled {
     box-shadow: 0 4px 30px rgba(149, 214, 0, 0.1);
 }
 
-/* Hero image overlay */
+/* Hero overlay */
 .hero-image-overlay {
     position: relative;
 }
@@ -25,7 +24,7 @@
     pointer-events: none;
 }
 
-/* Marquee animation */
+/* Marquee */
 .marquee-container {
     overflow: hidden;
     white-space: nowrap;
@@ -36,11 +35,12 @@
     animation: marquee 25s linear infinite;
 }
 
-.marquee-content:hover {
-    animation-play-state: paused;
+@keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
 }
 
-/* Monster Green glow text */
+/* Text glow effects */
 .text-glow {
     text-shadow: 0 0 10px rgba(149, 214, 0, 0.5), 0 0 20px rgba(149, 214, 0, 0.3);
 }
@@ -67,7 +67,6 @@
 /* Underline animation */
 .underline-animation {
     position: relative;
-    display: inline-block;
 }
 
 .underline-animation::after {
@@ -86,9 +85,9 @@
     width: 100%;
 }
 
-/* Card hover effects */
+/* Card hover */
 .card-lift {
-    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card-lift:hover {
@@ -96,7 +95,7 @@
     box-shadow: 0 15px 40px -8px rgba(149, 214, 0, 0.15);
 }
 
-/* Trust bar styling */
+/* Trust bar */
 .trust-bar {
     display: flex;
     flex-wrap: wrap;
@@ -104,7 +103,6 @@
     font-size: 0.75rem;
     text-transform: uppercase;
     letter-spacing: 0.15em;
-    color: #B8B8B8;
 }
 
 .trust-bar span:not(:last-child)::after {
@@ -113,7 +111,7 @@
     color: #95D600;
 }
 
-/* Icon container with green glow */
+/* Icon container */
 .icon-container {
     width: 60px;
     height: 60px;
@@ -133,8 +131,7 @@
 
 /* Contact cards */
 .contact-card {
-    background-color: #1A1A1A;
-    border: 2px solid #2A2A2A;
+    border-width: 2px;
     padding: 2rem;
     text-align: center;
     transition: all 0.3s ease;
@@ -142,31 +139,13 @@
 
 .contact-card:hover {
     border-color: #95D600;
-    background-color: #1A1A1A;
     box-shadow: 0 0 30px rgba(149, 214, 0, 0.15);
 }
 
-/* Blog card image */
-.blog-card-image {
-    aspect-ratio: 16/10;
-    overflow: hidden;
-}
-
-.blog-card-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.blog-card:hover .blog-card-image img {
-    transform: scale(1.05);
-}
-
-/* Music Player Floating */
+/* Audio Player */
 .music-player-float {
     position: fixed;
-    bottom: 24px;
+    bottom: 80px;
     left: 24px;
     z-index: 1000;
     background: rgba(13, 13, 13, 0.98);
@@ -176,6 +155,12 @@
     overflow: hidden;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 20px rgba(149, 214, 0, 0.1);
     transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+    .music-player-float {
+        bottom: 24px;
+    }
 }
 
 .music-player-float:hover {
@@ -192,13 +177,21 @@
     justify-content: center;
 }
 
-.music-player-expanded {
-    width: 340px;
+.music-player-expanded-audio {
+    width: 300px;
 }
 
-/* Green gradient section */
+@keyframes pulse-green {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(149, 214, 0, 0.4); }
+    50% { box-shadow: 0 0 20px 4px rgba(149, 214, 0, 0.2); }
+}
+
+.animate-pulse-green {
+    animation: pulse-green 2s ease-in-out infinite;
+}
+
+/* Green accent section */
 .green-accent-section {
-    background: linear-gradient(135deg, #1A1A1A 0%, #121212 100%);
     position: relative;
 }
 
@@ -212,7 +205,7 @@
     background: linear-gradient(90deg, transparent, #95D600, transparent);
 }
 
-/* Divider line */
+/* Divider */
 .green-divider {
     height: 2px;
     background: linear-gradient(90deg, transparent, #95D600, transparent);
@@ -220,18 +213,17 @@
 
 /* Stats card */
 .stat-card {
-    background: rgba(26, 26, 26, 0.8);
-    border: 1px solid rgba(149, 214, 0, 0.2);
     padding: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
+    border-width: 1px;
 }
 
 .stat-card:hover {
     border-color: #95D600;
 }
 
-/* Social button */
+/* Social buttons */
 .social-btn {
     width: 50px;
     height: 50px;
@@ -251,23 +243,21 @@
     box-shadow: 0 0 20px rgba(149, 214, 0, 0.4);
 }
 
-/* Drum brand inspired elements */
+/* Drum pattern background */
 .drum-pattern {
-    background-image: radial-gradient(circle at 2px 2px, rgba(149, 214, 0, 0.1) 1px, transparent 0);
-    background-size: 20px 20px;
+    background-image: radial-gradient(circle at 2px 2px, rgba(149, 214, 0, 0.05) 1px, transparent 0);
+    background-size: 24px 24px;
 }
 
-/* Monster claw scratch effect for headings */
-.claw-accent {
-    position: relative;
+/* Theme-aware footer in light mode */
+.theme-light .footer-bg {
+    background-color: #1A1A1A;
 }
 
-.claw-accent::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, #95D600, #7AB800, transparent);
+.theme-light .footer-bg .body-text {
+    color: #B8B8B8;
+}
+
+.theme-light .footer-bg .heading-color {
+    color: #F5F5F5;
 }
