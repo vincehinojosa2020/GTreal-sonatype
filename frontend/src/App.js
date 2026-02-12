@@ -254,7 +254,7 @@ const HeroSection = () => {
   const { isDark } = useTheme();
   
   return (
-    <section id="hero" data-testid="hero-section" className={`min-h-screen flex items-center pt-24 ${isDark ? 'bg-monster-black' : 'bg-white'}`}>
+    <section id="hero" data-testid="hero-section" className={`min-h-screen flex items-center pt-32 ${isDark ? 'bg-monster-black' : 'bg-white'}`}>
       <div className="w-full px-6 lg:px-12 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <AnimatedSection>
