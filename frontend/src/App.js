@@ -164,6 +164,30 @@ const ThemeToggle = () => {
   );
 };
 
+// Top Bar with DRE
+const TopBar = () => {
+  const { isDark } = useTheme();
+  return (
+    <div className={`fixed top-0 w-full z-50 py-2 px-6 lg:px-12 text-xs flex justify-between items-center ${
+      isDark ? 'bg-monster-black border-b border-monster-green/20' : 'bg-black text-white'
+    }`}>
+      <div className="flex items-center gap-4">
+        <span className={isDark ? 'text-monster-silver' : 'text-gray-400'}>George Toscano</span>
+        <span className={isDark ? 'text-monster-green' : 'text-white'}>DRE# 02213878</span>
+      </div>
+      <a 
+        href="https://kollabre.com/" 
+        target="_blank" 
+        rel="noopener noreferrer"
+        data-testid="kollab-link-top"
+        className={`font-semibold uppercase tracking-wider hover:underline ${isDark ? 'text-monster-green' : 'text-white'}`}
+      >
+        Kollab Real Estate →
+      </a>
+    </div>
+  );
+};
+
 // Navigation
 const Navigation = () => {
   const { isDark } = useTheme();
@@ -178,7 +202,7 @@ const Navigation = () => {
   return (
     <nav 
       data-testid="navigation" 
-      className={`fixed top-0 w-full z-50 px-6 lg:px-12 py-5 flex justify-between items-center transition-all duration-300 ${
+      className={`fixed top-8 w-full z-40 px-6 lg:px-12 py-4 flex justify-between items-center transition-all duration-300 ${
         isDark
           ? `${scrolled ? 'bg-monster-black/95 backdrop-blur-md' : 'bg-transparent'}`
           : `${scrolled ? 'bg-white/95 backdrop-blur-md shadow-sm' : 'bg-transparent'}`
@@ -195,6 +219,19 @@ const Navigation = () => {
             {item}
           </a>
         ))}
+        <a 
+          href="https://kollabre.com/" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          data-testid="kollab-link-nav"
+          className={`px-4 py-2 border transition-all ${
+            isDark 
+              ? 'border-monster-green/50 text-monster-green hover:bg-monster-green hover:text-monster-black' 
+              : 'border-black text-black hover:bg-black hover:text-white'
+          }`}
+        >
+          Kollab RE
+        </a>
       </div>
       
       <div className="flex items-center gap-4">
