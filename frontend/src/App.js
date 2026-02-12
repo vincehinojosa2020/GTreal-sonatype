@@ -511,10 +511,29 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left">
             <p className={`font-display text-2xl ${isDark ? 'text-monster-green' : ''}`}>GT REAL</p>
-            <p className="text-gray-500 text-sm">George Toscano • Kollab Real Estate</p>
+            <p className="text-gray-500 text-sm">George Toscano • DRE# 02213878</p>
+            <a href="https://kollabre.com/" target="_blank" rel="noopener noreferrer" className={`text-sm hover:underline ${isDark ? 'text-monster-green' : 'text-gray-400'}`}>
+              Kollab Real Estate
+            </a>
             {isDark && <p className="text-monster-green/60 text-xs mt-1">Tama · Zildjian · Vater</p>}
           </div>
-          <p className="text-gray-600 text-xs">© 2025 GT Real. Bay Area.</p>
+          <div className="flex gap-4">
+            <a href="https://www.linkedin.com/in/george-toscano-6b979821" target="_blank" rel="noopener noreferrer" 
+              className={`w-10 h-10 flex items-center justify-center transition-colors ${
+                isDark ? 'bg-monster-green/10 hover:bg-monster-green text-monster-green hover:text-monster-black' : 'bg-white/10 hover:bg-white hover:text-black'
+              }`}>
+              <LinkedinLogo size={20} weight="bold" />
+            </a>
+            <a href="https://instagram.com/gtreal.io" target="_blank" rel="noopener noreferrer" 
+              className={`w-10 h-10 flex items-center justify-center transition-colors ${
+                isDark ? 'bg-monster-green/10 hover:bg-monster-green text-monster-green hover:text-monster-black' : 'bg-white/10 hover:bg-white hover:text-black'
+              }`}>
+              <InstagramLogo size={20} weight="bold" />
+            </a>
+          </div>
+        </div>
+        <div className="border-t border-white/10 mt-8 pt-6 text-center text-xs text-gray-600">
+          <p>© 2025 GT Real. Bay Area, California.</p>
         </div>
       </div>
     </footer>
