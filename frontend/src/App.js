@@ -259,7 +259,7 @@ const HeroSection = () => {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <AnimatedSection>
             {/* GT REAL - Big Bold Statement */}
-            <h1 className={`font-display leading-none mb-6 ${isDark ? 'text-white' : 'text-black'}`}>
+            <h1 className={`font-display leading-none mb-4 ${isDark ? 'text-white' : 'text-black'}`}>
               {isDark ? (
                 <span className="text-6xl md:text-7xl lg:text-8xl">
                   YOUR HOME.<br />YOUR FUTURE.<br />
@@ -272,6 +272,11 @@ const HeroSection = () => {
                 </span>
               )}
             </h1>
+            
+            {/* DRE Number under headline */}
+            <p className={`text-sm uppercase tracking-widest mb-8 ${isDark ? 'text-monster-green' : 'text-gray-500'}`}>
+              DRE# 02213878
+            </p>
             
             <p className={`text-lg md:text-xl mb-8 max-w-md leading-relaxed ${isDark ? 'text-monster-silver' : 'text-gray-600'}`}>
               {isDark 
