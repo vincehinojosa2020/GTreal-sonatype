@@ -534,6 +534,7 @@ function AppContent() {
   const { isDark } = useTheme();
   return (
     <div className={`App ${isDark ? 'bg-monster-black text-white' : 'bg-white text-black'}`}>
+      <TopBar />
       <Navigation />
       <main>
         <HeroSection />
