@@ -258,17 +258,17 @@ const ChatWidget = () => {
 
   return (
     <>
-      {/* Chat Button - Minimal like music player */}
+      {/* Chat Button - Sleek like music player */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         data-testid="chat-widget-btn"
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 flex items-center justify-center transition-all duration-300 ${
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 flex items-center justify-center transition-all duration-300 rounded-xl ${
           isDark 
-            ? 'bg-monster-dark border-2 border-monster-green/40 rounded-lg hover:border-monster-green' 
-            : 'bg-white border border-gray-200 rounded-full shadow-lg hover:shadow-xl'
+            ? 'bg-monster-dark border-2 border-monster-green/40 hover:border-monster-green shadow-lg shadow-monster-green/10' 
+            : 'bg-white border border-gray-200 shadow-lg hover:shadow-xl'
         } ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 256 256" className={isDark ? 'text-monster-green' : 'text-black'}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256" className={isDark ? 'text-monster-green' : 'text-black'}>
           <path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78l.09-.07L83,208H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM40,224h0ZM216,192H80a8,8,0,0,0-5.23,1.95L40,224V64H216Z"/>
         </svg>
       </button>
