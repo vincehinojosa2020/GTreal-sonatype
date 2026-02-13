@@ -843,6 +843,7 @@ function AppContent() {
       </main>
       <Footer />
       <AudioPlayer />
+      <ChatWidget />
     </div>
   );
 }
