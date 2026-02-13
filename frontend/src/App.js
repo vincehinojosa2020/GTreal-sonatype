@@ -57,8 +57,9 @@ const AnimatedSection = ({ children, className = "" }) => {
   );
 };
 
-// Custom Chat Widget - GT Real Estate Assistant
+// Custom Chat Widget - Lucy (Minimal design matching music player)
 const ChatWidget = () => {
+  const { isDark } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
@@ -76,7 +77,6 @@ const ChatWidget = () => {
 
   useEffect(() => {
     if (isOpen && messages.length === 0) {
-      // Initial greeting
       setTimeout(() => {
         addBotMessage("Hi there! 👋 Welcome to GT Real Estate. I'm George Toscano's virtual assistant. How can I help you today?");
         setShowQuickReplies(true);
@@ -93,10 +93,10 @@ const ChatWidget = () => {
   };
 
   const quickReplies = [
-    { id: 'buy', text: '🏡 I want to buy a home' },
-    { id: 'worth', text: '💰 What\'s my home worth?' },
-    { id: 'showing', text: '📅 Schedule a showing' },
-    { id: 'contact', text: '📞 Contact George' }
+    { id: 'buy', text: '🏡 Buy a home' },
+    { id: 'worth', text: '💰 Home value' },
+    { id: 'showing', text: '📅 Showing' },
+    { id: 'contact', text: '📞 Contact' }
   ];
 
   const cityOptions = ['San Francisco', 'Oakland', 'San Jose', 'Other'];
@@ -129,7 +129,7 @@ const ChatWidget = () => {
       case 'contact':
         addUserMessage('📞 Contact George');
         setTimeout(() => {
-          addBotMessage("Here's how to reach George Toscano directly:\n\n📞 Phone: (408) 603-6603\n📧 Email: gtdrums@gmail.com\n🌐 Website: gtreal.io\nDRE# 02213878\n\nOr leave a message and he'll get back to you!");
+          addBotMessage("Here's how to reach George Toscano directly:\n\n📞 (408) 603-6603\n📧 gtdrums@gmail.com\nDRE# 02213878\n\nOr leave a message below!");
           setCurrentForm('contact');
         }, 500);
         break;
@@ -140,7 +140,7 @@ const ChatWidget = () => {
     addUserMessage(city);
     setCurrentForm(null);
     setTimeout(() => {
-      addBotMessage("Awesome! George would love to help you find the perfect home. Leave your name, email, and phone number below and he'll reach out within 24 hours!");
+      addBotMessage("Awesome! Leave your info below and George will reach out within 24 hours!");
       setCurrentForm('buyerInfo');
     }, 500);
   };
@@ -149,39 +149,25 @@ const ChatWidget = () => {
     e.preventDefault();
     const formType = currentForm;
     
-    // Store in localStorage
     const submissions = JSON.parse(localStorage.getItem('gtreal_submissions') || '[]');
-    submissions.push({
-      type: formType,
-      data: formData,
-      timestamp: new Date().toISOString()
-    });
+    submissions.push({ type: formType, data: formData, timestamp: new Date().toISOString() });
     localStorage.setItem('gtreal_submissions', JSON.stringify(submissions));
     
     setCurrentForm(null);
     setFormData({});
     
-    // Confirmation messages
     let confirmMsg = '';
     switch(formType) {
-      case 'buyerInfo':
-        confirmMsg = "Thanks! George will review your info and reach out within 24 hours to help you find your dream home! 🏡";
-        break;
-      case 'valuation':
-        confirmMsg = "Thanks! George will review your property and get back to you with a valuation within 48 hours. 🏠";
-        break;
-      case 'showing':
-        confirmMsg = "You're all set! George will confirm your showing shortly. Looking forward to meeting you! 🤝";
-        break;
-      case 'contact':
-        confirmMsg = "Message sent! George will get back to you soon. Thanks for reaching out! ✉️";
-        break;
+      case 'buyerInfo': confirmMsg = "Thanks! George will reach out within 24 hours! 🏡"; break;
+      case 'valuation': confirmMsg = "Thanks! George will send your valuation within 48 hours. 🏠"; break;
+      case 'showing': confirmMsg = "You're all set! George will confirm shortly. 🤝"; break;
+      case 'contact': confirmMsg = "Message sent! George will get back to you soon. ✉️"; break;
     }
     
     setTimeout(() => {
       addBotMessage(confirmMsg);
       setTimeout(() => {
-        addBotMessage("Is there anything else I can help with?");
+        addBotMessage("Anything else I can help with?");
         setShowQuickReplies(true);
       }, 1000);
     }, 500);
@@ -191,18 +177,28 @@ const ChatWidget = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const inputClass = `w-full px-3 py-2 rounded-lg text-sm outline-none transition-colors ${
+    isDark 
+      ? 'bg-monster-black border border-monster-gray text-white placeholder-monster-silver focus:border-monster-green' 
+      : 'bg-gray-100 border border-gray-200 text-black placeholder-gray-500 focus:border-black'
+  }`;
+
+  const btnClass = `w-full py-2 rounded-lg font-semibold transition-all ${
+    isDark 
+      ? 'bg-monster-green text-monster-black hover:bg-monster-green-light' 
+      : 'bg-black text-white hover:bg-gray-800'
+  }`;
+
   const renderForm = () => {
     if (currentForm === 'citySelect') {
       return (
-        <div className="flex flex-wrap gap-2 p-3">
+        <div className="flex flex-wrap gap-2 p-2">
           {cityOptions.map(city => (
-            <button
-              key={city}
-              onClick={() => handleCitySelect(city)}
-              className="px-4 py-2 bg-gray-100 hover:bg-[#c4952b] hover:text-white rounded-full text-sm transition-colors"
-            >
-              {city}
-            </button>
+            <button key={city} onClick={() => handleCitySelect(city)}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                isDark ? 'bg-monster-black border border-monster-green/50 text-monster-green hover:bg-monster-green hover:text-monster-black' 
+                : 'bg-gray-100 hover:bg-black hover:text-white'
+              }`}>{city}</button>
           ))}
         </div>
       );
@@ -210,92 +206,101 @@ const ChatWidget = () => {
 
     if (currentForm === 'buyerInfo') {
       return (
-        <form onSubmit={handleFormSubmit} className="p-3 space-y-2">
-          <input type="text" placeholder="Your Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="tel" placeholder="Phone" required value={formData.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <button type="submit" className="w-full py-2 bg-[#c4952b] text-white rounded font-semibold hover:bg-[#a67d24] transition-colors">Submit</button>
+        <form onSubmit={handleFormSubmit} className="p-2 space-y-2">
+          <input type="text" placeholder="Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className={inputClass} />
+          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className={inputClass} />
+          <input type="tel" placeholder="Phone" required value={formData.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} className={inputClass} />
+          <button type="submit" className={btnClass}>Submit</button>
         </form>
       );
     }
 
     if (currentForm === 'valuation') {
       return (
-        <form onSubmit={handleFormSubmit} className="p-3 space-y-2">
-          <input type="text" placeholder="Property Address" required value={formData.address || ''} onChange={(e) => handleInputChange('address', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="text" placeholder="Your Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="tel" placeholder="Phone" required value={formData.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <button type="submit" className="w-full py-2 bg-[#c4952b] text-white rounded font-semibold hover:bg-[#a67d24] transition-colors">Get My Free Valuation</button>
+        <form onSubmit={handleFormSubmit} className="p-2 space-y-2">
+          <input type="text" placeholder="Property Address" required value={formData.address || ''} onChange={(e) => handleInputChange('address', e.target.value)} className={inputClass} />
+          <input type="text" placeholder="Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className={inputClass} />
+          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className={inputClass} />
+          <input type="tel" placeholder="Phone" required value={formData.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} className={inputClass} />
+          <button type="submit" className={btnClass}>Get Valuation</button>
         </form>
       );
     }
 
     if (currentForm === 'showing') {
       return (
-        <form onSubmit={handleFormSubmit} className="p-3 space-y-2">
-          <input type="text" placeholder="Your Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="tel" placeholder="Phone" required value={formData.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="date" placeholder="Preferred Date" required value={formData.date || ''} onChange={(e) => handleInputChange('date', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="time" placeholder="Preferred Time" required value={formData.time || ''} onChange={(e) => handleInputChange('time', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="text" placeholder="Property Address or Area" required value={formData.property || ''} onChange={(e) => handleInputChange('property', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <button type="submit" className="w-full py-2 bg-[#c4952b] text-white rounded font-semibold hover:bg-[#a67d24] transition-colors">Schedule Showing</button>
+        <form onSubmit={handleFormSubmit} className="p-2 space-y-2">
+          <input type="text" placeholder="Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className={inputClass} />
+          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className={inputClass} />
+          <input type="tel" placeholder="Phone" required value={formData.phone || ''} onChange={(e) => handleInputChange('phone', e.target.value)} className={inputClass} />
+          <div className="flex gap-2">
+            <input type="date" required value={formData.date || ''} onChange={(e) => handleInputChange('date', e.target.value)} className={inputClass} />
+            <input type="time" required value={formData.time || ''} onChange={(e) => handleInputChange('time', e.target.value)} className={inputClass} />
+          </div>
+          <input type="text" placeholder="Property or Area" required value={formData.property || ''} onChange={(e) => handleInputChange('property', e.target.value)} className={inputClass} />
+          <button type="submit" className={btnClass}>Schedule</button>
         </form>
       );
     }
 
     if (currentForm === 'contact') {
       return (
-        <form onSubmit={handleFormSubmit} className="p-3 space-y-2">
-          <input type="text" placeholder="Your Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className="w-full px-3 py-2 border rounded text-sm" />
-          <textarea placeholder="Your Message" required value={formData.message || ''} onChange={(e) => handleInputChange('message', e.target.value)} className="w-full px-3 py-2 border rounded text-sm h-20 resize-none" />
-          <button type="submit" className="w-full py-2 bg-[#c4952b] text-white rounded font-semibold hover:bg-[#a67d24] transition-colors">Send Message</button>
+        <form onSubmit={handleFormSubmit} className="p-2 space-y-2">
+          <input type="text" placeholder="Name" required value={formData.name || ''} onChange={(e) => handleInputChange('name', e.target.value)} className={inputClass} />
+          <input type="email" placeholder="Email" required value={formData.email || ''} onChange={(e) => handleInputChange('email', e.target.value)} className={inputClass} />
+          <textarea placeholder="Message" required value={formData.message || ''} onChange={(e) => handleInputChange('message', e.target.value)} className={`${inputClass} h-16 resize-none`} />
+          <button type="submit" className={btnClass}>Send</button>
         </form>
       );
     }
-
     return null;
   };
 
   return (
     <>
-      {/* Chat Button */}
+      {/* Chat Button - Minimal like music player */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         data-testid="chat-widget-btn"
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-[#c4952b] text-white shadow-lg hover:bg-[#a67d24] transition-all duration-300 flex items-center justify-center ${isOpen ? 'scale-0' : 'scale-100'}`}
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 flex items-center justify-center transition-all duration-300 ${
+          isDark 
+            ? 'bg-monster-dark border-2 border-monster-green/40 rounded-lg hover:border-monster-green' 
+            : 'bg-white border border-gray-200 rounded-full shadow-lg hover:shadow-xl'
+        } ${isOpen ? 'scale-0 opacity-0' : 'scale-100 opacity-100'}`}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" viewBox="0 0 256 256" className={isDark ? 'text-monster-green' : 'text-black'}>
           <path d="M216,48H40A16,16,0,0,0,24,64V224a15.85,15.85,0,0,0,9.24,14.5A16.13,16.13,0,0,0,40,240a15.89,15.89,0,0,0,10.25-3.78l.09-.07L83,208H216a16,16,0,0,0,16-16V64A16,16,0,0,0,216,48ZM40,224h0ZM216,192H80a8,8,0,0,0-5.23,1.95L40,224V64H216Z"/>
         </svg>
       </button>
 
-      {/* Chat Panel */}
+      {/* Chat Panel - Minimal design */}
       <div
         data-testid="chat-widget-panel"
-        className={`fixed bottom-6 right-6 z-50 bg-white rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 ${
-          isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'
-        }`}
-        style={{ width: '350px', height: '500px', maxWidth: 'calc(100vw - 48px)', maxHeight: 'calc(100vh - 100px)' }}
+        className={`fixed bottom-6 right-6 z-50 overflow-hidden transition-all duration-300 ${
+          isDark 
+            ? 'bg-monster-dark border-2 border-monster-green/40 rounded-xl' 
+            : 'bg-white border border-gray-200 rounded-2xl shadow-2xl'
+        } ${isOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events-none'}`}
+        style={{ width: '320px', height: '480px', maxWidth: 'calc(100vw - 48px)', maxHeight: 'calc(100vh - 100px)' }}
       >
-        {/* Header */}
-        <div className="bg-[#c4952b] text-white p-4 flex items-center justify-between">
-          <span className="font-semibold">GT Real Estate Assistant 🏡</span>
-          <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 rounded p-1 transition-colors">
-            <X size={20} />
+        {/* Header - Minimal */}
+        <div className={`p-4 flex items-center justify-between border-b ${
+          isDark ? 'border-monster-green/20' : 'border-gray-100'
+        }`}>
+          <span className={`text-sm font-bold uppercase tracking-wider ${isDark ? 'text-monster-green' : 'text-black'}`}>Lucy</span>
+          <button onClick={() => setIsOpen(false)} className={`p-1 rounded transition-colors ${isDark ? 'hover:bg-monster-green/10' : 'hover:bg-gray-100'}`}>
+            <X size={18} className={isDark ? 'text-monster-green' : 'text-gray-500'} />
           </button>
         </div>
 
         {/* Messages */}
-        <div className="h-[340px] overflow-y-auto p-4 space-y-3 bg-gray-50">
+        <div className={`h-[340px] overflow-y-auto p-3 space-y-3 ${isDark ? 'bg-monster-black/50' : 'bg-gray-50'}`}>
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-              <div className={`max-w-[80%] px-4 py-2 rounded-2xl text-sm whitespace-pre-line ${
+              <div className={`max-w-[85%] px-3 py-2 rounded-xl text-sm whitespace-pre-line ${
                 msg.type === 'user' 
-                  ? 'bg-[#c4952b] text-white rounded-br-md' 
-                  : 'bg-white text-gray-800 shadow-sm rounded-bl-md'
+                  ? isDark ? 'bg-monster-green text-monster-black rounded-br-sm' : 'bg-black text-white rounded-br-sm'
+                  : isDark ? 'bg-monster-dark border border-monster-gray text-white rounded-bl-sm' : 'bg-white shadow-sm text-gray-800 rounded-bl-sm'
               }`}>
                 {msg.text}
               </div>
@@ -306,26 +311,25 @@ const ChatWidget = () => {
           {showQuickReplies && (
             <div className="flex flex-wrap gap-2 pt-2">
               {quickReplies.map(qr => (
-                <button
-                  key={qr.id}
-                  onClick={() => handleQuickReply(qr.id)}
-                  className="px-3 py-2 bg-white border border-[#c4952b] text-[#c4952b] rounded-full text-xs font-medium hover:bg-[#c4952b] hover:text-white transition-colors shadow-sm"
-                >
+                <button key={qr.id} onClick={() => handleQuickReply(qr.id)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                    isDark 
+                      ? 'bg-monster-dark border border-monster-green/50 text-monster-green hover:bg-monster-green hover:text-monster-black' 
+                      : 'bg-white border border-gray-300 text-gray-700 hover:bg-black hover:text-white hover:border-black'
+                  }`}>
                   {qr.text}
                 </button>
               ))}
             </div>
           )}
           
-          {/* Forms */}
           {renderForm()}
-          
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Footer */}
-        <div className="p-3 border-t bg-white">
-          <p className="text-xs text-gray-400 text-center">Powered by GT Real • DRE# 02213878</p>
+        {/* Footer - Minimal */}
+        <div className={`p-2 border-t ${isDark ? 'border-monster-green/20' : 'border-gray-100'}`}>
+          <p className={`text-xs text-center ${isDark ? 'text-monster-silver/50' : 'text-gray-400'}`}>GT Real • DRE# 02213878</p>
         </div>
       </div>
     </>
